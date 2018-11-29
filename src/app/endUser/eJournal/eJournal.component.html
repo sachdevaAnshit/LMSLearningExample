@@ -1,0 +1,62 @@
+<h4>Recommended eJournals - {{eJournalBandsData.recommendedData.totalResultCount}}</h4>
+<div class="row dataBand">
+  	<pager
+      	[totalItems]="eJournalBandsData.recommendedData.totalResultCount"
+      	[(ngModel)]="currentPage.recommendedCurrentPage"
+      	(pageChanged)="pageChanged('RECOMMENDED', $event.page, $event.itemsPerPage)"
+      	pageBtnClass="btn"
+      	[itemsPerPage]="itemsPerPage"
+      	previousText="''"
+      	nextText="''">
+    </pager>
+    <ul class="bandList">
+		<li *ngFor="let gridViewItem of eJournalBandsData.recommendedData.documents;">
+			<bayer-grid-view 
+				[downloadlinksobject]="downloadLinksObject" 
+				[passeddata]="gridViewItem" 
+				[excelobject]="dataToExportExcel"></bayer-grid-view>
+		</li>
+	</ul>
+</div>
+
+<h4>Most Viewed eJournals - {{eJournalBandsData.mostViewedData.totalResultCount}}</h4>
+<div class="row dataBand">
+  	<pager
+      	[totalItems]="eJournalBandsData.mostViewedData.totalResultCount"
+      	[(ngModel)]="currentPage.mostViewedCurrentPage"
+      	(pageChanged)="pageChanged('MOSTVIEWED', $event.page, $event.itemsPerPage)"
+      	pageBtnClass="btn"
+      	[itemsPerPage]="itemsPerPage"
+      	previousText="''"
+      	nextText="''">
+    </pager>
+    <ul class="bandList">
+		<li *ngFor="let gridViewItem of eJournalBandsData.mostViewedData.documents;">
+			<bayer-grid-view 
+				[downloadlinksobject]="downloadLinksObject" 
+				[passeddata]="gridViewItem" 
+				[excelobject]="dataToExportExcel"></bayer-grid-view>
+		</li>
+	</ul>
+</div>
+
+<h4>Recently Read eJournals - {{eJournalBandsData.recentlyReadData.totalResultCount}}</h4>
+<div class="row dataBand">
+  	<pager
+      	[totalItems]="eJournalBandsData.recentlyReadData.totalResultCount"
+      	[(ngModel)]="currentPage.recentlyReadCurrentPage"
+      	(pageChanged)="pageChanged('RECENTLYREAD', $event.page, $event.itemsPerPage)"
+      	pageBtnClass="btn"
+      	[itemsPerPage]="itemsPerPage"
+      	previousText="''"
+      	nextText="''">
+    </pager>
+    <ul class="bandList">
+		<li *ngFor="let gridViewItem of eJournalBandsData.recentlyReadData.documents;">
+			<bayer-grid-view 
+				[downloadlinksobject]="downloadLinksObject" 
+				[passeddata]="gridViewItem" 
+				[excelobject]="dataToExportExcel"></bayer-grid-view>
+		</li>
+	</ul>
+</div>

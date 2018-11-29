@@ -1,0 +1,73 @@
+(function() {
+    'use strict';
+    angular.module("libraryApp").controller("libraryCartController", libraryCartController);
+    libraryCartController.$inject = ['$scope', '$rootScope', '$q', '$log', '$window', '$location', '$timeout', '$http', 'apiService', "CONSTANTS", "URLS", "GENERALEVENTS"];
+
+    function libraryCartController($scope, $rootScope, $q, $log, $window, $location, $timeout, $http, apiService, CONSTANTS, URLS, GENERALEVENTS) {
+        sessionStorage.routeToRedirect = "/libraryCart";
+        if (CONSTANTS.getCONSTANTS().NULLCHECK == sessionStorage.LMS_AUTH_TOKEN || CONSTANTS.getCONSTANTS().EMPTYSTRINGCHECK == sessionStorage.LMS_AUTH_TOKEN) {
+            $location.path('/login')
+        } else {
+            var userExpressDeliveryCharges, allPromises, orderNumberArray, i, removedArray, docList, cartItemsTOProcess;
+            $scope.placeOrderResponse = {
+                "success": [],
+                "failed": []
+            };
+            allPromises = [apiService.getData($rootScope.config.url + URLS.getURLS().GETEXPRESSDELIVERYURL + sessionStorage.cwid, sessionStorage.LMS_AUTH_TOKEN), apiService.getData($rootScope.config.url + URLS.getURLS().SHOPPINGCARTVIEW + sessionStorage.cwid, sessionStorage.LMS_AUTH_TOKEN)];
+            $q.all(allPromises).then(function(values) {
+                userExpressDeliveryCharges = values[0].data;
+                $scope.shoppingCartItems = values[1].data;
+                $rootScope.cartCount = $scope.shoppingCartItems.length
+            });
+            $scope.removeItemFromCart = function(cartItemIdToRemove, cartIndexToRemove) {
+                apiService.deleteWithoutData($rootScope.config.url + URLS.getURLS().SHOPPINGCARTDELETE + cartItemIdToRemove, sessionStorage.LMS_AUTH_TOKEN, 'DELETE').then(function(response, statusText, xhr) {
+                    if (response.data) {
+                        $scope.shoppingCartItems.splice(cartIndexToRemove, 1);
+                        $rootScope.cartCount = $scope.shoppingCartItems.length
+                    } else $location.path('/error')
+                }, function(reject) {
+                    $location.path('/error')
+                })
+            }
+            $scope.expressDelivery = function(passedObject) {
+                if (passedObject.expressDelivery == "false") {
+                    passedObject.express = CONSTANTS.getCONSTANTS().TRUE;
+                    passedObject.expressOptionPrice = userExpressDeliveryCharges;
+                    if (passedObject.totalPrice != userExpressDeliveryCharges + passedObject.basePrice)
+                        passedObject.totalPrice += passedObject.expressOptionPrice
+                } else {
+                    passedObject.express = CONSTANTS.getCONSTANTS().FALSE;
+                    passedObject.totalPrice -= passedObject.expressOptionPrice;
+                    passedObject.expressOptionPrice = CONSTANTS.getCONSTANTS().NULLCHECK
+                }
+            }
+            $scope.checkoutForPayment = function() {
+                cartItemsTOProcess = {};
+                cartItemsTOProcess.cartItems = GENERALEVENTS.removeLitServices($scope.shoppingCartItems);
+                cartItemsTOProcess.cwid = sessionStorage.cwid;
+                apiService.putPostData($rootScope.config.url + URLS.getURLS().PLACEORDERURL, sessionStorage.LMS_AUTH_TOKEN, cartItemsTOProcess, 'POST', 'JSON').then(function(response) {
+                    if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                        $location.path("/login")
+                    } else {
+                        $scope.placeOrderResponse = response.data;
+                        removedArray = [];
+                        if (sessionStorage.documentList != CONSTANTS.getCONSTANTS().NULLCHECK && typeof sessionStorage.documentList != CONSTANTS.getCONSTANTS().UNDEFINED) {
+                            docList = JSON.parse(sessionStorage.documentList);
+                            angular.forEach(docList, function(innerItem, innerIndex) {
+                                angular.forEach(cartItemsTOProcess.cartItems, function(outerItem) {
+                                    if (!angular.equals(innerItem, outerItem.literature)) {
+                                        removedArray.push(innerItem)
+                                    }
+                                })
+                            })
+                        }
+                        $scope.shoppingCartItems = [];
+                        $rootScope.cartCount = $scope.shoppingCartItems.length;
+                        sessionStorage.documentList = JSON.stringify(removedArray);
+                        $scope.showMyOrdersSuccessFailPage = CONSTANTS.getCONSTANTS().TRUE
+                    }
+                }, function(response) {})
+            }
+        }
+    }
+})()

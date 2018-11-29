@@ -1,0 +1,28 @@
+<div class="row">	
+	<div class="col-md-6 ellipsis resultCountWrapper">
+		<span>{{myFavoriteData.totalResultCount}}</span> Documents
+	</div> <!-- end of .resultCountWrapper -->
+	<div class="col-md-6 listGridWrapper">
+		<a (click)="changeLayout('grid')">Grid<span>- - - - - - - - </span></a>
+		<a (click)="changeLayout('list')">List<span>- - - - - - - - </span></a>
+	</div><!-- end of .listGridWrapper -->
+</div>
+
+<ul class="no-padding-left" *ngIf="layout == 'grid'">
+	<li class='gridItems' *ngFor="let searchResultData of myFavoriteData.documents; let index=index">
+		<bayer-grid-view 
+			[downloadlinksobject]="downloadLinksObject" 
+			[passeddata]="searchResultData" 
+			[excelobject]="dataToExportExcel"
+			(getFavData)="getFavData()"></bayer-grid-view>
+	</li>
+</ul>
+<ul class="no-padding-left" *ngIf="layout == 'list'">
+	<li class='listItems' *ngFor="let searchResultData of myFavoriteData.documents; let index=index">
+		<bayer-list-view 
+			[downloadlinksobject]="downloadLinksObject" 
+			[passeddata]="searchResultData" 
+			[excelobject]="dataToExportExcel"
+			(getFavData)="getFavData()"></bayer-list-view>
+	</li>
+</ul>

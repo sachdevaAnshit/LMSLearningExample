@@ -1,0 +1,13 @@
+<perfect-scrollbar id="mainScrollWrapper" (psScrollY)="mainScroll($event)" #componentRef>
+	<div class='container-fluid libraryMainContainer'>
+		<header-component [ssoValue]="ssoValue" [notificationAndCartCount]="notificationAndCartCount"></header-component>
+
+		<a [routerLink]="['/eJournalAZ']">eJouranl AZ</a>
+
+		<div class="clear" style="clear:both;"></div>
+		<router-outlet></router-outlet>
+	</div>
+
+    <h2 (click)="scrollTop()">Top</h2>
+	
+</perfect-scrollbar>

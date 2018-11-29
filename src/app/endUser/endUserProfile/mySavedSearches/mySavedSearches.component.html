@@ -1,0 +1,33 @@
+<div class='mysavedSearchesWrapper'>
+    <div class="skew-heading font-size16">
+        <div class="align-news-text"><span class="bayer-bright-fuchsia">///// </span>
+        My Saved Searches</div>
+    </div>
+    <div class='mysavedSearchesDataWrapper height-auto'>        
+        <div class='mySearchesLabels'>
+            <div class='col-xs-4 col-sm-3'>Date & Time</div>
+            <div class='col-xs-7 col-sm-8' title='Search Name'>Search Name</div>
+            <div class='col-xs-1 col-sm-1'></div>
+        </div> <!-- end of .mySearchesLabels -->
+        <div class="clear"></div>
+        <div class='mysavedSearchesData'>
+            <div class='mySavedSearches' *ngFor="let key of Object.keys(savedSearches)">
+                <div class='groupByDate height-auto'>{{key}}</div>
+                <div class='mySavedSearchesList' *ngFor="let searchToDisplay of savedSearches[key]" id="{{searchToDisplay}}">
+                    <p class='col-xs-4 col-sm-3' title='{{searchToDisplay.searchTime}}'>{{searchToDisplay.searchTime}}</p>
+                    <p class='col-xs-7 col-sm-8 reRunSearchQuery' title='{{searchToDisplay.name}}' (click)="reRunQuery($event, searchToDisplay)">{{searchToDisplay.name}}</p>
+                    <p class='col-xs-1 col-sm-1 text-center'>
+                       <img src="assets/img/delete_pink.png" (click)="deleteNamedSearch($event, searchToDisplay)"/></p>
+                    <div class='clear:both'></div>
+                </div>  <!-- end of .mySavedSearchesList -->
+            </div>  <!-- end of .mySavedSearches -->
+            <p ng-show='mySavedSearchesLength' class="noResultFoundMessage" *ngIf="!Object.keys(savedSearches).length">no result found</p>
+        </div>      <!-- end of .min-height-mySearchesWrapper-->
+    </div>          <!--end of .my-searches-total-wrapper-->
+</div>	<!--end of .my-searches-wrapper-->
+
+
+<p (click)="scrollTop()">Top</p>
+
+
+Promises Comncept in ANGaul 5 https://codecraft.tv/courses/angular/http/http-with-promises/

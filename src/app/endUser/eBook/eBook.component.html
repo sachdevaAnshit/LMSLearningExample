@@ -1,0 +1,62 @@
+<h4>Recommended eBooks - {{eBookBandsData.recommendedData.totalResultCount}}</h4>
+<div class="row dataBand">
+  	<pager
+      	[totalItems]="eBookBandsData.recommendedData.totalResultCount"
+      	[(ngModel)]="currentPage.recommendedCurrentPage"
+      	(pageChanged)="pageChanged('RECOMMENDED', $event.page, $event.itemsPerPage)"
+      	pageBtnClass="btn"
+      	[itemsPerPage]="itemsPerPage"
+      	previousText="''"
+      	nextText="''">
+    </pager>
+    <ul class="bandList">
+		<li *ngFor="let gridViewItem of eBookBandsData.recommendedData.documents;">
+			<bayer-grid-view 
+				[downloadlinksobject]="downloadLinksObject" 
+				[passeddata]="gridViewItem" 
+				[excelobject]="dataToExportExcel"></bayer-grid-view>
+		</li>
+	</ul>
+</div>
+
+<h4>Most Viewed eBooks - {{eBookBandsData.mostViewedData.totalResultCount}}</h4>
+<div class="row dataBand">
+  	<pager
+      	[totalItems]="eBookBandsData.mostViewedData.totalResultCount"
+      	[(ngModel)]="currentPage.mostViewedCurrentPage"
+      	(pageChanged)="pageChanged('MOSTVIEWED', $event.page, $event.itemsPerPage)"
+      	pageBtnClass="btn"
+      	[itemsPerPage]="itemsPerPage"
+      	previousText="''"
+      	nextText="''">
+    </pager>
+    <ul class="bandList">
+		<li *ngFor="let gridViewItem of eBookBandsData.mostViewedData.documents;">
+			<bayer-grid-view 
+				[downloadlinksobject]="downloadLinksObject" 
+				[passeddata]="gridViewItem" 
+				[excelobject]="dataToExportExcel"></bayer-grid-view>
+		</li>
+	</ul>
+</div>
+
+<h4>Recently Read eBooks - {{eBookBandsData.recentlyReadData.totalResultCount}}</h4>
+<div class="row dataBand">
+  	<pager
+      	[totalItems]="eBookBandsData.recentlyReadData.totalResultCount"
+      	[(ngModel)]="currentPage.recentlyReadCurrentPage"
+      	(pageChanged)="pageChanged('RECENTLYREAD', $event.page, $event.itemsPerPage)"
+      	pageBtnClass="btn"
+      	[itemsPerPage]="itemsPerPage"
+      	previousText="''"
+      	nextText="''">
+    </pager>
+    <ul class="bandList">
+		<li *ngFor="let gridViewItem of eBookBandsData.recentlyReadData.documents;">
+			<bayer-grid-view 
+				[downloadlinksobject]="downloadLinksObject" 
+				[passeddata]="gridViewItem" 
+				[excelobject]="dataToExportExcel"></bayer-grid-view>
+		</li>
+	</ul>
+</div>

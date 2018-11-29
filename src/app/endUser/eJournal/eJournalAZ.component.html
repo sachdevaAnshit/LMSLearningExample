@@ -1,0 +1,47 @@
+<div class="eJournalAZContainer">
+	<div class="firstRow">
+		<div class="skew-heading">
+			<div class="align-news-text">
+				<span class="bayer-bright-fuchsia">//// </span>eJournal A-Z Search
+			</div>
+		</div>
+		<ul class="no-padding">
+			<li *ngFor="let alphabet of arrayOfAlphabets" (click)="getEJournalTitles(alphabet)" [ngClass]="{'active' : searchPhrase == alphabet}" style="display: inline-block;padding:0 15px">
+				{{alphabet}}
+			</li>
+		</ul>
+		<div class="row refineAZSearch">
+			<div class="col-xs-12 col-sm-6">
+				<label class="pull-left">
+					<img src="assets/img/refine.png"/>
+					<span class="eJournalAZSearchRefineLabel">Refine</span>
+				</label>
+				<span class="pull-right clearAllWrapper" (click)="getEJournalTitles(searchPhrase)">
+					<a id="clearAll" title='Clear All' href='javascript:void(0)'>Clear All</a>
+				</span>
+				<div class="clear"></div>
+				<div class="refineTextWrapper pos-relative">
+					<form name="normalSearchForm" ng-submit="refineSearch();" novalidate>
+						<div class="pos-relative" style="position: relative;">							
+							<input id='refineButton' class="refineSearchResult" type='text' [(ngModel)]="refineText" placeholder="Refine" name="refineText" autocomplete (inputChangedEvent)="getAutosuggestions($event, 'refineText')" (selectEvent)="refineSearch();" [config]="config2" [items]="autoCompleteSuggestionsObj.refineText">
+							<img src="assets/img/search_icon.png" class="refineA-ZSearch" (click)="refineSearch()" type='submit'/>
+						</div>
+					</form>
+				</div>			
+			</div>
+		</div>
+	</div>
+
+	<ul class="eJournalAZResults">
+		<li *ngFor="let eJournalAZSearchItem of eJournalAToZResults.documents">
+			<p access-article [objToLookFor]="eJournalAZSearchItem">{{eJournalAZSearchItem.fields.title}}</p>
+			<!-- <span ng-if="isArray(eJournalAZSearchItem.fields.title)"
+			title="{{eJournalAZSearchItem.fields.title.join(', ')}}" access-article="eJournalAZSearchItem">{{eJournalAZSearchItem.fields.title.join(',')}}</span>
+			<span class="bookTitle" ng-if="!isArray(eJournalAZSearchItem.fields.title)"
+			title="{{eJournalAZSearchItem.fields.title}}" access-article="eJournalAZSearchItem">{{eJournalAZSearchItem.fields.title}}</span> -->
+		</li>
+		<li class="text-center" *ngIf="eJournalAToZResults.documents.length == 0">
+			No result found.
+		</li>
+	</ul>
+</div>

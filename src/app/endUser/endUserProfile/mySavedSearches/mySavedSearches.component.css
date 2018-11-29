@@ -1,0 +1,29 @@
+/*** My Saved Searches styles ***/
+.mysavedSearchesWrapper .skew-heading {
+    max-width: 275px;margin: 20px 0;height: 34px;
+}
+.mysavedSearchesWrapper .skew-heading::before{
+    height: 33px;
+}
+.mysavedSearchesDataWrapper .mySearchesLabels > div{
+    background: #10384f;color: #fff;font-weight: bold;font-size: 20px;height: 55px;padding: 10px 20px;border-right:1px solid #fff;
+}
+.mysavedSearchesDataWrapper .mySearchesLabels > div:nth-child(3){
+    border-right-color: #10384F;
+}
+.mysavedSearchesDataWrapper .mysavedSearchesData .groupByDate {
+    background: linear-gradient(to right, #10384f , #fff);color: #fff;font-size: 18px;padding: 8px 20px;border-right: 1px solid #88C1DB;
+}
+.mysavedSearchesDataWrapper .mySavedSearchesList > p{
+    background: #ddf6ff;padding: 10px 20px;font-size: 18px;color: #10384f;border: 1px solid #88C1DB;margin: 0;
+}
+.mysavedSearchesDataWrapper .mySavedSearchesList > p:nth-child(2){
+    text-decoration: underline;cursor: pointer;
+}
+.mysavedSearchesDataWrapper .mySavedSearchesList > p:nth-child(3) img{
+    width:20px;height: 20px;
+}
+.mysavedSearchesDataWrapper .noResultFoundMessage {
+    border: 1px solid #88C1DB;text-align: center;margin: 0;font-size: 20px;padding: 8px;background: #ddf6ff;color: #10384f;
+}
+/*** My Saved Searches styles ends ***/

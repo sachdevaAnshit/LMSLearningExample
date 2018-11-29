@@ -1,0 +1,280 @@
+<header id='header'>
+    <div id='intranetLabel'><span>INTRANET</span></div>
+    <div class='row no-margin clear mobile-hide' style="margin-top: 15px;">
+        <div class='col-xs-6 no-padding-left-right'>
+            <a href="home"><img class='pull-left' src='assets/img/svgs/bayer_library_header.svg'/></a>
+        </div>
+        <div class='col-xs-6 no-padding-left-right'>
+            <a href="http://de.bayernet.cnb/" target="_blank">
+                <img class='pull-right' src='assets/img/svgs/bayer-logo.svg'/></a>
+        </div>
+    </div>
+
+    <div class="highNotificationSection font-size16" ng-show="notificationAndCartCount.highnotificationbanner.length">
+        <marquee class="notificationScroll">
+            <ul class="highInfoBanners no-margin">
+                <li *ngFor="let highNotificationItem of notificationAndCartCount.highnotificationbanner">
+                    <p class="no-margin"><i>// {{highNotificationItem.message}}</i></p>
+                </li>
+            </ul>
+        </marquee>
+    </div>  <!-- end of high priority notification banner -->
+
+    <p [hidden]="!true">{{"notificationAndCartCount = = = " + (notificationAndCartCount|json)}}
+
+    <nav class="navbar navbar-default" id='libraryMainNavbar'>
+        <div>
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed libraryNavbarCollapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <img id='crossIcon' src='assets/img/closeIcon.png'/>
+                </button>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="clearMobile collapse navbar-collapse" id="navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="bayerLogoSticky" >
+                        <a class="logo" href="http://de.bayernet.cnb/" target="_blank"><img class="loading" src='assets/img/bayer-white-logo.png' data-was-processed="true"></a>
+                        <a href="home" style="margin-left:10px;">Bayer Library</a>
+                    </li>
+                    <li class="home"><a [routerLink]="['/home']">HOME</a></li>
+                    <li class="eBooksTab"><a [routerLink]="['/eBooks']">eBooks</a></li>
+                    <li class="eJournalsTab"><a [routerLink]="['/eJournals']">eJournals</a></li>
+                    <li class="dropdown docBoardTab">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title='DOCBOARD'>
+                            DOCBOARD
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="documentOrder"><a [routerLink]="['/documentOrder']">Document Order</a></li>
+                            <li class="documentList"><a [routerLink]="['/documentList']">Document List</a></li>
+                            <li class="myOrders"><a [routerLink]="['/myOrders']">My Orders</a></li>
+                            <li class="myOnlineAccesses"><a [routerLink]="['/myOnlineAccesses']">My Online Accesses</a></li>
+                            <li class="manageYourDeliveryAddress"><a [routerLink]="['/manageYourDeliveryAddress']">Manage Your Delivery Address</a></li>
+                        </ul>
+                    </li>
+                    <li class="copyrightTab"><a [routerLink]="['/user/copyright']">Copyright</a></li>
+                    <li class="moreTab"><a [routerLink]="['/more']">More</a></li>
+                    <li class="libraryCart">
+                        <a [routerLink]="['/libraryCart']">
+                            <img src='assets/img/cartIcon.png' class='itemNoHover'/>
+                            <img src='assets/img/cartHoverIcon.png' class='itemhover'/>
+                            <span class="badge" *ngIf="notificationAndCartCount.cartCount != 0" style="">{{notificationAndCartCount.cartCount}}</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav rightNavUl">
+                    <li class='mobile-hide searchTab' (click)='triggerSearch()'>
+                        <a href="javascript:void(0)" title='Search'>
+                            Search eBooks/eJournals
+                            <img class='pull-right' *ngIf='!toggle_flag' src='assets/img/search_icon.png'/>
+                            <img class='pull-right' *ngIf='toggle_flag' src='assets/img/closeIcon.png'/>
+                        </a>
+                    </li>
+                    <li class="dropdown profileTab">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <img src='assets/img/userIcon.png' class='itemNoHover'>
+                            <img src='assets/img/userIconHover.png' class='itemhover'>
+                            <span>Anshit Sachdeva</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="mySavedSearches">
+                                <a [routerLink]="['/mySavedSearches']"><img src="assets/img/my_saved_searches.png"/>My Saved Searches</a>
+                            </li>
+                            <li class="myFavorites">
+                                <a [routerLink]="['/myFavorites']"><img src="assets/img/my_favorites.png"/>My Favorites</a>
+                            </li>
+                            <li class="eBookManagement">
+                                <a [routerLink]="['/eBookManagement']"><img src="assets/img/eBook_management.png"/>eBook Mgmt</a>
+                            </li>
+                            <li class="eJournalManagement">
+                                <a [routerLink]="['/eJournalManagement']"><img src="assets/img/eJournal_management.png"/>eJournal Mgmt</a>
+                            </li>
+                            <li class="bulletinBoardManagement">
+                                <a [routerLink]="['/bulletinBoardManagement']"><img src="assets/img/bulletin_board_management.png"/>Bulletin Board Mgmt</a>
+                            </li>
+                            <li class="nonEndUserCopyright">
+                                <a [routerLink]="['/copyright']"><img src="assets/img/copyright_profile.png"/>Copyright</a>
+                            </li>
+                            <li class="adminManagement">
+                                <a [routerLink]="['/adminManagement']"><img src="assets/img/admin_management.png"/>Admin Mgmt</a>
+                            </li>
+                            <li class="sso">
+                                <a>SSO<ui-switch [(ngModel)]="ssoValue" (change)="ssoChanged($event)"></ui-switch></a>
+                            </li>
+                            <li class="logOut">
+                                <a href="javascript:void(0)" ng-click="subMenuItemClicked()"><img src="assets/img/logout.png"/>Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='mobile-hide internationalisation'>
+                        <a href="javascript:void(0)" title="EN" (click)="getLanguageTranslations('en')" 
+                        *ngIf="notificationAndCartCount.selectedLanuage == 'de'">EN</a>
+                        <a href="javascript:void(0)" title="DE" (click)="getLanguageTranslations('de')" 
+                        *ngIf="notificationAndCartCount.selectedLanuage == 'en'">DE</a>
+                    </li>
+                    <li class='notificationTab no-padding-right'>
+                        <a href="javascript:void(0)" title='Notification'>
+                            <img src='assets/img/infoIcon.png' class='itemNoHover'>
+                            <img src='assets/img/infoIconHover.png' class='itemhover'>
+                            <span class="badge" *ngIf="notificationAndCartCount.lownotificationbanner.length">{{notificationAndCartCount.lownotificationbanner.length}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>  <!-- /.navbar-collapse -->
+        </div>      <!-- /.container-fluid -->
+    </nav>
+
+    <section class="searchSlider" #normalSearchSection *ngIf="toggle_flag">
+        <form #normalSearchForm name="normalSearchForm" id="normalSearchForm" (submit)="submitNormalSearch( normalSearchForm );" novalidate>
+            <div class="searchPhraseInput pos-relative" style="position: relative;">
+                <input id='homeSearchInput' type='text' placeholder="Search eBooks/eJournals" autocomplete 
+                    [(ngModel)]="searchQuery" [config]="config2" 
+                    [items]="autoCompleteSuggestionsObj.searchQuery"
+                    (inputChangedEvent)="onInputChangedEvent($event, sourcesChecked, null, 'searchQuery')" 
+                    (selectEvent)="submitNormalSearch( normalSearchForm );" [(ngModel)]="searchQuery"  ng-disabled="disableNormalSearch" name="searchQuery">
+                <img id="searchIconPosition" src="assets/img/search_icon.png" type='submit' ng-disabled='normalSearchForm.$invalid' 
+                (click)="submitNormalSearch( normalSearchForm );"/>
+            </div>
+            <div class="row" style="margin: 0;color:#fff;">
+                <label for="EBOOK">
+                    <input type="checkbox" id="EBOOK" (click)="sourcesCheckEvent('EBOOK')" 
+                    [checked]="sourcesChecked.indexOf('EBOOK')!=-1"/>eBook</label>
+                <label for="EJOURNAL">
+                    <input type="checkbox" id="EJOURNAL" (click)="sourcesCheckEvent('EJOURNAL')" 
+                    [checked]="sourcesChecked.indexOf('EJOURNAL')!=-1" />eJournal</label>
+                <label for="PUBMED">
+                    <input type="checkbox" id="PUBMED" (click)="sourcesCheckEvent('PUBMED')" 
+                    [checked]="sourcesChecked.indexOf('PUBMED')!=-1" />PubMed
+                    </label>
+                <label for="CROSSREF">
+                    <input type="checkbox" id="CROSSREF" (click)="sourcesCheckEvent('CROSSREF')" 
+                    [checked]="sourcesChecked.indexOf('CROSSREF')!=-1" />CrossRef</label>
+            </div>
+        </form>        
+        <div style="clear:both"></div>
+        <a class="pull-right" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style='color: #00bcff;cursor: pointer;  text-decoration: underline;' ng-click="triggerAdvancedSearch()"><i>Advanced Search</i></a>
+    </section>
+
+    <div class="clear collapse advancedSearchSection" id="collapseExample">
+        <p [hidden]="true">{{"searchObject = = = "  + (searchObject|json)}}</p>
+        <p [hidden]="true">{{"autoCompleteSuggestionsObj = = = "  + (autoCompleteSuggestionsObj|json)}}</p>
+        <form name="advancedSearchForm" novalidate id="advancedSearchForm">
+            <p class="bayer-raspberry noInputfilledError" *ngIf= "noInputfilledError">{{noInputfilledError}}</p>
+            <div class="row advancedSearchRow no-margin">
+                <div class="selectWrapper col-sm-3 col-xs-12">
+                    <!-- <select class="form-control advancedSearchSelectDropdown" ng-model="selectedSearchCriteria">
+                        <option ng-repeat='dropDownValue in advancedSearchDropdown' value='{{dropDownValue.value}}'>{{dropDownValue.displayName}}</option>
+                    </select> -->
+                    <select class="form-control advancedSearchSelectDropdown" [(ngModel)]="selectedSearchCriteria" style="width:100%" 
+                    name="selectedSearchCriteria">
+                        <option value="allText">All Fields</option>
+                        <option value="authorEditor">Author</option>
+                        <option value="title">Article Title</option>
+                        <option value="bookTitle">Book Title</option>
+                        <option value="journalTitle">Journal Title</option>
+                        <option value="year">Year</option>
+                        <option value="subject">Subjects</option>
+                        <option value="isbn">ISBN</option>
+                        <option value="issn">ISSN</option>
+                        <option value="documentIdentifier">DOI</option>
+                        <option value="keywords">Keywords</option>
+                        <option value="sourceAdditionalInfomation">Abstract</option>
+                        <option value="language">Language</option>
+                        <option value="publisher">Publisher</option>
+                    </select>
+                </div>
+                <div class="searchPhraseInput col-sm-9 col-xs-12">
+                    <input  class="form-control" type="text" placeholder="Search..." autocomplete 
+                    [(ngModel)]="selectedSearchPhrase" [config]="config2" 
+                    [items]="autoCompleteSuggestionsObj.first"
+                    (inputChangedEvent)="onInputChangedEvent($event, sourcesChecked, searchObject.criteria, 'first')" name="searchQuery">
+                </div>
+            </div>
+            <!-- Additional choices -->
+            <div class="row advancedSearchRow no-margin additionalFields" *ngFor="let choice of choices;let i = index">
+                <div class="selectWrapper col-xs-6 col-sm-3">
+                    <button type="button" class="btn pull-left col-xs-4"
+                        [ngClass]="{'active': choice.operation == 'AND'}" (click)="choice.operation = 'AND'">AND</button>
+                    <button type="button" class="btn pull-left col-xs-4"
+                        [ngClass]="{'active': choice.operation == 'NOT'}" (click)="choice.operation = 'NOT'">NOT</button>
+                    <button type="button" class="btn pull-left col-xs-4"
+                        [ngClass]="{'active': choice.operation == 'OR'}" (click)="choice.operation = 'OR'">OR</button>
+                </div>
+                <div class="selectWrapper col-xs-6 col-sm-3">
+                    <!-- <select class="form-control advancedSearchSelectDropdown" ng-model="choice.criteria">
+                        <option ng-repeat='dropDownValue in advancedSearchDropdown' value='{{dropDownValue.value}}'>{{dropDownValue.displayName}}</option>
+                    </select> -->
+                    <select class="form-control advancedSearchSelectDropdown" [(ngModel)]="choice.criteria" style="width:100%" 
+                    [ngModelOptions]="{standalone: true}">
+                        <option value="allText">All Fields</option>
+                        <option value="authorEditor">Author</option>
+                        <option value="title">Article Title</option>
+                        <option value="bookTitle">Book Title</option>
+                        <option value="journalTitle">Journal Title</option>
+                        <option value="year">Year</option>
+                        <option value="subject">Subjects</option>
+                        <option value="isbn">ISBN</option>
+                        <option value="issn">ISSN</option>
+                        <option value="documentIdentifier">DOI</option>
+                        <option value="keywords">Keywords</option>
+                        <option value="sourceAdditionalInfomation">Abstract</option>
+                        <option value="language">Language</option>
+                        <option value="publisher">Publisher</option>
+                    </select>
+                </div>
+                <div class="searchPhraseInput pos-relative col-xs-12 col-sm-6">
+                    <input autocomplete [(ngModel)]="choice.searchPhrase" [config]="config2" [items]="autoCompleteSuggestionsObj[i]" placeholder="Search..." (inputChangedEvent)="onInputChangedEvent($event,sourcesChecked,choice.criteria,i)" [ngModelOptions]="{standalone: true}">
+                    <img src="assets/img/delete_pink.png" (click)='choices.splice($index,1)'/>
+                </div>
+            </div>
+            <button type="button" class="btn pull-right bg-light-blue margin-bottom10" (click)='addAutoComplete()' 
+            [disabled]='choices.length == 10'><img src="assets/img/add_icon.png" style="margin-right:5px;"/>+ Add Condition</button>
+            <div class="clear"></div>
+            <!-- Time span -->
+            <div class="row advancedSearchRow no-margin moreOptions">
+                <div class="selectWrapper">
+                    <label class="pull-left">Time Span</label>
+                    <label class="pull-left">
+                        <input name="timeSpan" ng-control="options" type="radio" [value]="false" [(ngModel)]="timeSpanRange" 
+                        name="singleYearInput"/>
+                    </label>
+                    <select class="form-control advancedSearchSelectDropdown" [(ngModel)]='allRangeYear' name="allRangeYear" [disabled]="timeSpanRange == true" style="width:125px;float: left;">
+                        <option value="">Select</option>
+                        <option *ngFor='let dropDownValue of advancedSearchYearDropdown' value='{{dropDownValue}}'>{{dropDownValue}}</option>
+                    </select>
+                    <label class="pull-left">
+                        <input name="timeSpan" ng-control="options" type="radio" [value]="true" [(ngModel)]="timeSpanRange" name="rangeYear"/>
+                    </label>
+                    <select class="form-control advancedSearchSelectDropdown" ng-model='fromYear' name="fromYear" [disabled]="timeSpanRange == false" style="width:125px;float: left;">
+                        <option value="">Select</option>
+                        <option *ngFor='let dropDownValue of advancedSearchYearDropdown' value='{{dropDownValue}}'>{{dropDownValue}}</option>
+                    </select>
+                    <label class="pull-left">To</label>
+                    <select class="form-control advancedSearchSelectDropdown" ng-model='toYear' name="toYear" [disabled]="timeSpanRange == false" style="width:125px;float: left;">
+                        <option value="">Select</option>
+                        <option *ngFor='let dropDownValue of advancedSearchYearDropdown' value='{{dropDownValue}}'>{{dropDownValue}}</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Language -->
+            <div class="row advancedSearchRow no-margin moreOptions">
+                <div class="selectWrapper col-xs-12 col-sm-4">
+                    <label style="float: left;font-weight: normal;">Language</label>
+                    <div class="clear visible-xs margin-bottom10"></div>
+                    <button type="button" class="btn pull-left col-xs-3 active" [ngClass]="{'active': language == 'English'}" 
+                    (click)="language = 'English'">English</button>
+                    <button type="button" class="btn pull-left col-xs-3" [ngClass]="{'active': language == 'German'}" 
+                    (click)="language = 'German'">German</button>
+                </div>
+            </div>
+            <button type="submit" class="btn pull-right bg-dark-blue" (click)="submitAdvancedSearch( advancedSearchForm, 'NORMALSEARCH' );">Search<img src="assets/img/search.png" style="margin-left:20px;"/></button>
+            <button type="submit" class="btn pull-right bg-dark-blue" (click)="submitAdvancedSearch( advancedSearchForm, 'CATALOGUESEARCH')">Catalogue Search<img src="assets/img/search.png" style="margin-left:20px;"/></button>
+            <div class="clear"></div>
+        </form>       
+    </div>
+
+</header>

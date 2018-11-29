@@ -1,0 +1,72 @@
+<p>{{translations.navbarDocumentOrder}}</p>
+
+<div id="formValidationWrapper">
+    <form #trialForm="ngForm" (ngSubmit)="onSubmit(trialForm)" >
+        {{formObj | json}}
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" required [(ngModel)]="formObj.name" name="name" 
+                #nameSpy="ngModel" minlength="2" appForbiddenName="bob"/>
+            <p [hidden]="true">TODO: remove this: {{nameSpy.className}}</p>
+            <p [hidden]="true">{{"nameSpy.dirty = = = = " + nameSpy.dirty}}</p>
+            <div *ngIf="nameSpy.dirty && nameSpy.invalid" class="alert alert-danger">
+                <div *ngIf="nameSpy.errors.required">Name is required.</div>
+                <div *ngIf="nameSpy.errors.minlength">Name must be at least 2 characters long.</div> 
+                <div *ngIf="nameSpy.errors.forbiddenName">Name cannot be Bob through custom validation.</div>
+            </div>
+        </div>
+        <div class="form-group">
+          <label for="alterEgo">Alter Ego</label>
+          <input type="text"  class="form-control" id="alterEgo" required [(ngModel)]="formObj.alterEgo" name="alterEgo" 
+                #alterEgoSpy="ngModel">
+          <p [hidden]="true">TODO: remove this: {{alterEgoSpy.className}}</p>
+          <p [hidden]="true">{{"alterEgoSpy.dirty = = = = " + alterEgoSpy.dirty}}</p>
+          <div *ngIf="alterEgoSpy.dirty && alterEgoSpy.invalid" class="alert alert-danger">
+                <div *ngIf="alterEgoSpy.errors.required">Name is required.</div>
+            </div>
+        </div>
+        <p>{{"form valid stare = "  + trialForm.form.valid}}</p>
+        <button type="submit" class="btn btn-success" [disabled]="!trialForm.form.valid">Submit</button>
+    </form>
+    <p>{{"abc == = = " + this.abc}}</p>
+    <p>{{"def == = = " + this.def}}</p>
+    <p>{{"heroForm.errors?.siblingReqError = = = "  + conditionalReq.errors?.siblingReqError}}</p>
+    <!-- && (conditionalReq.touched || conditionalReq.dirty) -->    
+    <form #conditionalReq="ngForm" abcDefReqError (ngSubmit)="onSubmitConditionalReq(conditionalReq)">
+        <div *ngIf="conditionalReq.errors?.siblingReqError  && conditionalReqSubmitted" class="cross-validation-error-message alert alert-danger">Abc and Def cannot be same</div>
+        <div class="row">
+            <input type="text" [(ngModel)]="abc" name="abc" #abcSpy="ngModel"/>
+        </div>
+        <div class="row">
+            <input type="text" [(ngModel)]="def" name="def" #defSpy="ngModel"/>
+        </div>
+        <button type="submit" class="btn btn-success" >Submit</button>
+    </form>
+</div>
+
+<div style="clear: both"></div>
+
+<h2>TO DO THINGS</h2>
+<p>Word cloud</p>
+<p>Reactive Forms</p>
+<p>Location</p>
+<p>Angular Universal</p>
+<p>Angular Deployed Page refresh issue with server configurations</p>
+<p>Angular with index.html to index.jsp</p>
+
+<h2>DONE THINGS</h2>
+<p>Interactive tooltip  https://www.npmjs.com/package/angular2-tooltip  - - - - - https://codepen.io/jamilhijjawi/pen/lIwbK</p>
+<p>Scrollbar as in currennt LMS with offset measuring in app.component.ts</p>
+<p>Grid & List VIew - My Fav Add and Its Flag preserval on My Favorites page</p>
+<p>Dynamic Forms URL - - -<a>https://stackblitz.com/angular/nvvmqbpanbrv?file=src%2Fapp%2Fdynamic-form-question.component.html</a></p>
+<p>Download File - -  No need of window.location.href as href are not used for routing in ANgualr 2+</p>
+<p>Upload File URL - -  https://www.npmjs.com/package/ng4-file-upload
+<p>Image upload URL - - https://www.html5rocks.com/en/tutorials/file/dndfiles/ &&& Image Deltion</p>
+<p>Image through base 64 encoded string in Grid/List directive</p>
+<p>Sibing components communication through - Subject(Observables) in Library Cart and App Componen</p>
+<p>Autocomplete  - Static and Dynamic in More Page</p>
+<p>Autocomplete Working With Dynamic List - - - https://www.npmjs.com/package/ng2-input-autocomplete</p>
+<p>Autocomplete Didn't Work --> https://stackblitz.com/angular/ymnbrelyvar?file=app%2Fapp.module.ts</p>
+<p>Autocomplete Didn't Work --> https://rhostem.github.io/ng2-simple-autocomplete</p>
+<p>Autocomplete Didn't Work --> https://www.npmjs.com/package/ng2-simple-autocomplete </p>
+<p>Internationalisation English & German</p>

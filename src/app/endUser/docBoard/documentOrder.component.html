@@ -1,0 +1,240 @@
+<div class='row documentOrderFirstRow childHeader' *ngIf="showLiteratureSearch">
+	DocBoard <span class="bayer-green"> > Document Delivery -  {{tabToShow}}</span>
+	<div class="pull-right documentDeliveryTooltips">
+		<a tooltip-placement="top" uib-tooltip="eJournal Tooltip" class="font-size16 cursor-pointer">
+			eJournal <img src="assets/img/infoIcon1.png"/>
+		</a> |
+		<a tooltip-placement="top" uib-tooltip="ebook Tooltip" class="font-size16 cursor-pointer">
+			eBook <img src="assets/img/infoIcon1.png"/>
+		</a>
+	</div>
+</div>
+
+<h3>Clickable Tooltip</h3>
+
+<style>
+div.interactiveTooltip {
+  	background:#1d1d1d;color:#fff;padding:7px;border-radius:5px;position:absolute;min-width:50px;max-width:300px;display:none;z-index:2;
+}
+div.interactiveTooltip:before{
+  content:'';height:3px;width:0;border:7px solid transparent;border-bottom-color:#1d1d1d;position:absolute;top:-16px;left:14px;z-index:2;
+}
+div.interactiveTooltip a{
+  color:#1884BC;text-decoration:none;
+}
+</style>
+<ul>
+  	<li>
+    	Test1
+    	<div class="interactiveTooltip">
+    		<p>Get Excel template from 
+    			<a class="tooltipLink" href="assets/excel_template/Bulk_Upload_Template_v3.xlsm">here</a>
+    		</p>
+    	</div>
+  	</li>
+  	<li>
+	    Test2
+        <div class="interactiveTooltip">	tooltip2 <button type="button" id="anshit">Click Me</button>	</div>
+  	</li> 
+</ul>
+
+<div id="documentOrderWrapper" *ngIf="showLiteratureSearch">
+	<ul>
+		<li (click)="selectTab('journalArticle')">Journal Article</li>
+		<li (click)="selectTab('patent')">Patent</li>
+		<li (click)="selectTab('eBookChapter')">eBook Chapter</li>
+		<li (click)="selectTab('loanBook')">Loan Book</li>
+		<li (click)="selectTab('thesis')">Thesis</li>
+		<li class="pull-right">Mandatory Message</li>
+	</ul>
+	<div>
+		<p *ngIf='buttonClicked && notFoundError' title='Not found'>Not found</p>
+
+		<div id="journalArticle" *ngIf="getSelectedTabStatus('journalArticle')">
+			<p *ngIf='buttonClicked && commonError' title="Article Error">Article Error</p>
+			<p *ngIf='buttonClicked && formValidationMessages && !docOrderObj.journalTitle && !docOrderObj.issn' title="Title ISSN error">Title ISSN error</p>
+			<p *ngIf='buttonClicked && formValidationMessages && !docOrderObj.volume && !docOrderObj.journalArticleYear' title="Year Volume Error">Year Volume Error</p>
+			<p *ngIf='buttonClicked && formValidationMessages && !docOrderObj.journalArticleStartPage && !docOrderObj.articleTitle' title="Start Page Article Ttile Error">Start Page Article Ttile Error</p>
+			<p *ngIf='buttonClicked && !yearNotValid' title="Year not valid">Year not valid</p>
+			<!-- Error Messages for Document Order - Journal Article form invalid ends -->
+			<form name='journalIdentifierForm' id='journalIdentifierForm' ng-submit='orderLiteratureSearch(journalIdentifierForm,journalForm,"journalIdentifierForm","journalForm","JOURNAL_ARTICLE",docOrderObj)' novalidate>
+				<div class="wellWrapper row">
+			    	<div class="col-xs-12 col-sm-4 doiWrapper">
+						<input type="text" id="journalDOI" [(ngModel)]='docOrderObj.identifier' placeholder="DOI" *ngIf="docOrderObj.identifierType === 'DOI'" name="identfierDOI"/>
+						<input type="text" id="journalDOI" [(ngModel)]='docOrderObj.identifier' placeholder="PMID" *ngIf="docOrderObj.identifierType === 'PMID'"name="identfierPMID"/>
+					</div>
+			        <div class="col-xs-12 col-sm-3">
+			        	<label>
+			        		<input type="radio" (click)="docOrderObj.identifierType = 'DOI'" [checked]="docOrderObj.identifierType == 'DOI'"/>
+			        		DOI
+			        	</label>
+			        	<label>
+			        		<input type="radio" (click)="docOrderObj.identifierType = 'PMID'" [checked]="docOrderObj.identifierType == 'PMID'"/>
+			        		PMID
+			        	</label>
+			        </div>
+			        <div class="col-xs-12 col-sm-5">
+			        	<button type="submit" class="bg-light-pink orderButton" title='oRDER' (click)='orderLiteratureSearch(journalIdentifierForm,journalForm,"journalIdentifierForm","journalForm","JOURNAL_ARTICLE",docOrderObj)' 
+			        	[disabled]="disableOrderButton">Order</button>
+	                	<div class="uploadExcelWrapper">
+							<span class="cursor-pointer" ngf-select="uploadFiles($file)" ng-model="file" name="file" ngf-pattern="'.xlsm'" ngf-accept="'.xlsm'">
+								<span class=" uploadSpan" title='Upload Excel'>Upload Excel</span>
+								<a class="getExcelTooltip" data-tooltip-content="#tooltip_content" data-placement="top">
+									<img src="assets/img/upload_icon.png"/>
+								</a>
+							</span>
+							<div class="docBoardTooltipTemplate">
+								<span id="tooltip_content">
+									<p>Get Excel template from <a class="tooltipLink" href="assets/excel_template/Bulk_Upload_Template_v3.xlsm">here</a>
+									</p>
+								</span>
+							</div>
+						</div>
+			    	</div>
+				</div>
+			</form>
+			<div class="skew-heading">
+				<div class="align-news-text" title="Journal Article">
+					<span class="bayer-bright-fuchsia">///// </span>Journal Article
+				</div>
+			</div>
+			<form name='journalForm' id='journalForm' ng-submit='orderLiteratureSearch(journalIdentifierForm,journalForm,"journalIdentifierForm","journalForm","JOURNAL_ARTICLE",docOrderObj)' novalidate>
+				<div class="row no-margin detailsRow">
+					<div class="col-xs-12 col-sm-4">
+						<div class="literatureDetailsWrapper">
+							<div class="input input--hoshi">
+						        <input class="" type="text" id="journalName" [(ngModel)]='docOrderObj.journalTitle' 
+						        	ng-required='!docOrderObj.issn' placeholder="journal Title" name="journalTitle"/>
+							</div>
+							<div class="clear"></div>
+							<p class="andOrLabel">AND/OR</p>
+							<div class="clear"></div>
+							<div class="input input--hoshi">					        
+								<input class="" type="text" id="journalISSN" [(ngModel)]='docOrderObj.issn' placeholder="ISSN" ng-required='!docOrderObj.journalTitle' name="issn"/>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<div class="literatureDetailsWrapper">
+							<div class="input input--hoshi">
+						        <input class="" type="text" id="journalISSN" id="journalYear" [(ngModel)]='docOrderObj.journalArticleYear' ng-required='!docOrderObj.volume' maxlength='4' placeholder="year" name="journalArticleYear"/>
+							</div>
+							<div class="clear"></div>
+							<p class="andOrLabel">AND/OR</p>
+							<div class="clear"></div>
+							<div class="input input--hoshi marginBottomInputs">
+						        <input class="" type="text" id="journalVolume" [(ngModel)]='docOrderObj.volume' ng-required='!docOrderObj.journalArticleYear' placeholder="Volume" name="volume"/>
+							</div>
+							<div class="clear"></div>
+							<div class="input input--hoshi">
+								<input class="" type="text" id="journalIssue" [(ngModel)]='docOrderObj.issue' placeholder="Issue" name="issue"/>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<div class="literatureDetailsWrapper">
+							<div class="input input--hoshi">
+						        <input class="" type="text" id="journalISSN" id="journalArticleTitle" [(ngModel)]='docOrderObj.articleTitle' ng-required='!docOrderObj.journalArticleStartPage' placeholder="Article Title" name="articleTitle"/>
+							</div>
+							<div class="clear"></div>
+							<p class="andOrLabel">And/Or</p>
+							<div class="clear"></div>
+							<div class="input input--hoshi startPage">					        
+								<input class="" type="text" id="journalArticleStartPage" [(ngModel)]='docOrderObj.journalArticleStartPage' ng-required='!docOrderObj.articleTitle' placeholder="Start Page" name="journalArticleStartPage"/>
+							</div>
+							<p class="toSeparator">To</p>
+							<div class="input input--hoshi endPage">
+						        <input class="" type="text" id="journalArticleEndPage" [(ngModel)]='docOrderObj.journalArticleEndPage' placeholder="End Page" name="journalArticleEndPage"/>
+							</div>
+							<div class="clear"></div>
+							<div class="input input--hoshi">
+								<input class="" type="text" id="journalArticleAuthor" [(ngModel)]='docOrderObj.articleAuthors' placeholder="Article Authors Page" name="articleAuthors"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row no-margin orderRestRow">
+					<button type="submit" class="bg-light-pink orderButton" title='Order' [disabled]="disableOrderButton">Order</button>
+	                <div (click)='resetLitForm()' class="bg-dark-blue resetButton cursor-pointer" title='Clear'>Clear</div>
+				</div>
+			</form>
+		</div>
+		<div id="journalArticle" *ngIf="getSelectedTabStatus('patent')">
+			Patent
+		</div>
+		<div id="journalArticle" *ngIf="getSelectedTabStatus('eBookChapter')">
+			eBook Chapter
+		</div>
+		<div id="journalArticle" *ngIf="getSelectedTabStatus('loanBook')">
+			Loan Book
+		</div>
+		<div id="journalArticle" *ngIf="getSelectedTabStatus('thesis')">
+			Thesis
+		</div>
+	</div>
+</div>
+
+<div class='row documentOrderFirstRow childHeader' *ngIf='showAmbigousList'>
+	DocBoard
+	<span class="bayer-green">> Document Delivery > Results</span>
+</div>
+<div id='ambigousListWrapper' *ngIf='showAmbigousList'>
+	<div id="ambigousListText">
+		Ambiguous results - please select the required document
+	</div>
+	<div class='ambigousList'>
+		<div class='col-xs-12 col-sm-6 col-md-4 ambigousItem' ng-repeat='ambigousListItem in ambigousList track by $index'>
+			<div ng-switch="ambigousListItem.type">
+				<div ng-switch-when="JOURNAL">
+					<div ng-include src="'app/shared/templates/ambigousListTemplates/journalArticleTemplate.html'"></div>
+				</div>
+				<div ng-switch-when="JOURNAL_ARTICLE">
+					<div ng-include src="'app/shared/templates/ambigousListTemplates/journalArticleTemplate.html'"></div>
+				</div>
+				<div ng-switch-when="BOOK_PART">
+					<div ng-include src="'app/shared/templates/ambigousListTemplates/bookAndThesisTemplate.html'"></div>
+				</div>
+				<div ng-switch-when="BOOK">
+					<div ng-include src="'app/shared/templates/ambigousListTemplates/bookAndThesisTemplate.html'"></div>
+				</div>
+				<div ng-switch-when="DISSERTATION">
+					<div ng-include src="'app/shared/templates/ambigousListTemplates/bookAndThesisTemplate.html'"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>	<!-- end of ambigousListWrapper -->
+
+<!--uploadSuccessFailureWrapper SUCCESS Scenario -->
+<div class='row documentOrderFirstRow' *ngIf='uploadExcelSuccess'>
+    DocBoard
+    <span class="bayer-green">> Document Delivery > Bulk Upload</span>
+</div>
+<div class='uploadSuccessFailureWrapper' *ngIf='uploadExcelSuccess'>
+	<div class="uploadSuccessFailureContent">
+		<p class="no-margin uploadSuccessLabel">Successful
+			<img src="assets/img/uploadSuccess.png"/>
+		</p>
+		<p class="no-margin">
+			Upload Msg {{completeListCount}} in <a href='documentList'>{{translations.docList}}</a>
+		</p>
+	</div>
+</div>	<!-- end of uploadSuccessFailureWrapper SUCCESS Scenario -->
+
+<!--uploadSuccessFailureWrapper FAILURE Scenario -->
+<div class='row documentOrderFirstRow' *ngIf='uploadExcelFailed'>	
+	DocBoard
+	<span class="bayer-green">> Document delivery </span>
+	<span class="bayer-bright-fuchsia">> Bulk Upload</span>
+</div>
+<div class='uploadSuccessFailureWrapper' *ngIf='uploadExcelFailed'>
+	<div class="uploadSuccessFailureContent">
+		<p class="no-margin uploadFailureLabel bayer-bright-fuchsia">Error uploading
+			<img src="assets/img/failed_icon.png"/>
+		</p>
+		<p class="no-margin">
+			<a class="redirect" href='javascript:void(0)' ng-click='showLiteratureSearch=true;showExcelProgress = false;uploadExcelFailed=false'>Try again</a>
+		</p>
+	</div>
+</div>	<!-- end of uploadSuccessFailureWrapper FAILURE Scenario -->

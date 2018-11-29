@@ -1,0 +1,346 @@
+(function() {
+    'use strict';
+    angular.module("libraryApp").controller("documentOrderController", documentOrderController);
+    documentOrderController.$inject = ['$scope', '$rootScope', '$log', '$sce', '$window', '$location', '$interval', '$uibModal', '$timeout', 'apiService', 'Upload', 'CONSTANTS', 'URLS', 'GENERALEVENTS'];
+
+    function documentOrderController($scope, $rootScope, $log, $sce, $window, $location, $interval, $uibModal, $timeout, apiService, Upload, CONSTANTS, URLS, GENERALEVENTS) {
+        $(".getExcelTooltip").tooltipster({
+            contentAsHTML: CONSTANTS.getCONSTANTS().TRUE,
+            interactive: CONSTANTS.getCONSTANTS().TRUE
+        });
+        $scope.getNewTab = function(form, form1) {
+            $scope.disableOrderButton = CONSTANTS.getCONSTANTS().FALSE;
+            $scope.buttonClicked = CONSTANTS.getCONSTANTS().FALSE;
+            $scope.notFoundError = CONSTANTS.getCONSTANTS().FALSE;
+            form.$setPristine();
+            form1.$setPristine()
+        };
+        $scope.selectTab = function() {
+            return GENERALEVENTS.docBoardTabs().indexOf($scope.tabToShow)
+        };
+        var localLitObject, sessionStoredValue, modalInstance, yearTocheck, $emptyFields, index, emptyObject;
+        $scope.patentCodeArrays = GENERALEVENTS.getDocumentOrderPatentArray();
+        var getDefaultLiteratureSearchObject = function() {
+            localLitObject = GENERALEVENTS.getDocumentOrderLiteratureObject();
+            if (sessionStorage.recoverLiteratureSearchObject == "null" || typeof sessionStorage.recoverLiteratureSearchObject == CONSTANTS.getCONSTANTS().UNDEFINED) {
+                if (sessionStorage.resoreTabToShow == "YES")
+                    $scope.tabToShow = sessionStorage.restoreThisTab;
+                else $scope.tabToShow = "journalArticle";
+                return localLitObject
+            } else {
+                sessionStoredValue = JSON.parse(sessionStorage.recoverLiteratureSearchObject);
+                if (sessionStoredValue.type === CONSTANTS.getCONSTANTS().LITERATURESEARCHJOURNALTYPE || sessionStoredValue.type === CONSTANTS.getCONSTANTS().LITERATURESEARCHJOURNALARTICLETYPE) {
+                    $scope.tabToShow = "journalArticle";
+                    localLitObject.journalTitle = sessionStoredValue.journalTitle;
+                    localLitObject.issn = sessionStoredValue.issn;
+                    localLitObject.journalArticleYear = sessionStoredValue.year;
+                    localLitObject.volume = sessionStoredValue.volume;
+                    localLitObject.issue = sessionStoredValue.issue;
+                    localLitObject.journalArticleStartPage = sessionStoredValue.startPage;
+                    localLitObject.journalArticleEndPage = sessionStoredValue.endPage;
+                    localLitObject.articleTitle = sessionStoredValue.articleTitle;
+                    if (sessionStoredValue.articleAuthors != null) {
+                        if (sessionStoredValue.articleAuthors.length != 0 && sessionStoredValue.articleAuthors.length != null) {
+                            localLitObject.articleAuthors = sessionStoredValue.articleAuthors.join(';')
+                        }
+                    }
+                    if (sessionStoredValue.pmid == null && sessionStoredValue.doi == null) {
+                        localLitObject.identifierType = "DOI";
+                        localLitObject.identifier = null
+                    } else if (sessionStoredValue.pmid == null) {
+                        localLitObject.identifierType = "DOI";
+                        localLitObject.identifier = sessionStoredValue.doi
+                    } else {
+                        localLitObject.identifierType = "PMID";
+                        localLitObject.identifier = sessionStoredValue.pmid
+                    }
+                } else if (sessionStoredValue.type === CONSTANTS.getCONSTANTS().LITERATURESEARCHPATENTTYPE) {
+                    $scope.tabToShow = "patent";
+                    localLitObject.countryCode = sessionStoredValue.countryCode;
+                    localLitObject.patentNumber = sessionStoredValue.number;
+                    localLitObject.kindCode = sessionStoredValue.kindCode
+                } else if (sessionStoredValue.type === CONSTANTS.getCONSTANTS().LITERATURESEARCHLOANBOOKTYPE) {
+                    $scope.tabToShow = "loanBook";
+                    localLitObject.bookISBN = sessionStoredValue.isbn13;
+                    if (sessionStoredValue.authors.length != 0 && sessionStoredValue.authors.length != null) {
+                        localLitObject.bookAuthors = sessionStoredValue.authors.join(';')
+                    }
+                    localLitObject.bookPublisher = sessionStoredValue.publisher;
+                    localLitObject.edition = sessionStoredValue.edition;
+                    localLitObject.bookYear = sessionStoredValue.year;
+                    localLitObject.bookTitle = sessionStoredValue.bookTitle;
+                    localLitObject.identifier = sessionStoredValue.doi
+                } else if (sessionStoredValue.type === CONSTANTS.getCONSTANTS().LITERATURESEARCHBOOKPARTTYPE) {
+                    $scope.tabToShow = "eBookChapter";
+                    localLitObject.bookISBN = sessionStoredValue.isbn13;
+                    if (sessionStoredValue.authors.length != 0 && sessionStoredValue.authors.length != null) {
+                        localLitObject.bookAuthors = sessionStoredValue.authors.join(';')
+                    }
+                    localLitObject.bookPublisher = sessionStoredValue.publisher;
+                    localLitObject.edition = sessionStoredValue.edition;
+                    localLitObject.bookYear = sessionStoredValue.year;
+                    localLitObject.bookTitle = sessionStoredValue.bookTitle;
+                    localLitObject.identifier = sessionStoredValue.doi;
+                    localLitObject.bookPartStartPage = sessionStoredValue.startPage;
+                    localLitObject.bookPartEndPage = sessionStoredValue.endPage;
+                    localLitObject.chapterTitle = sessionStoredValue.chapterTitle;
+                    localLitObject.chapterAuthors = sessionStoredValue.chapterAuthors.join(';')
+                } else {
+                    $scope.tabToShow = "thesis";
+                    localLitObject.dissertationTitle = sessionStoredValue.title;
+                    if (sessionStoredValue.authors.length != 0) {
+                        localLitObject.dissertationAuthors = sessionStoredValue.authors.join(';')
+                    }
+                    localLitObject.dissertationYear = sessionStoredValue.year;
+                    localLitObject.institution = sessionStoredValue.institution;
+                    localLitObject.dissertationPublisher = sessionStoredValue.publisher
+                }
+                $timeout(function() {
+                    angular.element("#getLatestTabButton").trigger('click')
+                }, 1000);
+                return localLitObject
+            }
+        }
+        $scope.hitAPIForDocBoardLiteratureSearch = function(literatureSearchObject) {
+            if (!$scope.disableOrderButton) {
+                $scope.disableOrderButton = CONSTANTS.getCONSTANTS().TRUE;
+                literatureSearchObject.cwid = sessionStorage.cwid;
+                apiService.putPostData($rootScope.config.url + URLS.getURLS().DOCBOARDSEARCHURL, sessionStorage.LMS_AUTH_TOKEN, literatureSearchObject, 'post', 'json').then(function(response) {
+                    if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                        $location.path("/login")
+                    } else {
+                        handleDocBoardURLResponse(response);
+                        $scope.disableOrderButton = CONSTANTS.getCONSTANTS().FALSE
+                    }
+                }, function(response) {
+                    $scope.disableOrderButton = CONSTANTS.getCONSTANTS().FALSE
+                })
+            }
+        }
+
+        function handleDocBoardURLResponse(response) {
+            apiService.appUsageIncrement($rootScope.config.url + URLS.getURLS().ADMINMGMTAPPLICATIONUSAGEADD, sessionStorage.LMS_AUTH_TOKEN, sessionStorage.division, "Docboard Search");
+            if (typeof response.data.AmbiguousList != CONSTANTS.getCONSTANTS().UNDEFINED && response.data.AmbiguousList != CONSTANTS.getCONSTANTS().NULLCHECK) {
+                $scope.showAmbigousList = CONSTANTS.getCONSTANTS().TRUE;
+                $scope.showLiteratureSearch = CONSTANTS.getCONSTANTS().FALSE;
+                $scope.ambigousList = response.data.AmbiguousList;
+                if (typeof sessionStorage.documentList == CONSTANTS.getCONSTANTS().UNDEFINED || sessionStorage.documentList == CONSTANTS.getCONSTANTS().NULLCHECK) {
+                    $scope.sessionInitialLength = CONSTANTS.getCONSTANTS().NUMERIC_ZERO
+                } else {
+                    $scope.sessionInitialLength = JSON.parse(sessionStorage.documentList).length
+                }
+                $scope.totalAmbigousLists = CONSTANTS.getCONSTANTS().ONE
+            } else if (typeof response.data.CompleteList != CONSTANTS.getCONSTANTS().UNDEFINED && response.data.CompleteList != CONSTANTS.getCONSTANTS().NULLCHECK) {
+                if (typeof sessionStorage.documentList == CONSTANTS.getCONSTANTS().UNDEFINED || sessionStorage.documentList == CONSTANTS.getCONSTANTS().NULLCHECK) {
+                    $scope.sessionDataInAarrayFormat = response.data.CompleteList
+                    sessionStorage.documentList = JSON.stringify($scope.sessionDataInAarrayFormat)
+                } else {
+                    $scope.sessionDataInAarrayFormat = JSON.parse(sessionStorage.documentList);
+                    $scope.sessionDataInAarrayFormat.push(response.data.CompleteList[0]);
+                    sessionStorage.documentList = JSON.stringify($scope.sessionDataInAarrayFormat)
+                }
+                $location.search({});
+                $location.path('/documentList')
+            } else {
+                $scope.notFoundError = CONSTANTS.getCONSTANTS().TRUE
+            }
+        }
+        if (CONSTANTS.getCONSTANTS().NULLCHECK == sessionStorage.LMS_AUTH_TOKEN || CONSTANTS.getCONSTANTS().EMPTYSTRINGCHECK == sessionStorage.LMS_AUTH_TOKEN) {
+            $location.path('/login');
+            if (Object.keys($location.search()).length == 0) {
+                sessionStorage.routeToRedirect = "/documentOrder";
+                sessionStorage.documentOrderQueryString = "null"
+            } else {
+                sessionStorage.routeToRedirect = '/documentOrder';
+                sessionStorage.documentOrderQueryString = JSON.stringify($location.search())
+            }
+            $location.search({})
+        } else {
+            if (Object.keys($location.search()).length == 0 && ((sessionStorage.documentOrderQueryString == undefined || sessionStorage.documentOrderQueryString == "undefined") || (sessionStorage.documentOrderQueryString == null || sessionStorage.documentOrderQueryString == "null"))) {
+                sessionStorage.routeToRedirect = "/documentOrder";
+                $scope.literatureSearchObject = getDefaultLiteratureSearchObject()
+            } else {
+                sessionStorage.routeToRedirect = '/documentOrder';
+                if (sessionStorage.documentOrderQueryString == undefined || sessionStorage.documentOrderQueryString == "undefined") {
+                    sessionStorage.documentOrderQueryString = JSON.stringify($location.search())
+                }
+                apiService.postDataWithParams($rootScope.config.url + URLS.getURLS().DOCBOARDJUMPINURL, JSON.parse(sessionStorage.documentOrderQueryString), sessionStorage.LMS_AUTH_TOKEN, {
+                    "cwid": sessionStorage.cwid
+                }, 'post', 'json').then(function(response) {
+                    if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                        $location.path("/login")
+                    } else {
+                        handleDocBoardURLResponse(response)
+                    }
+                }, function(response) {});
+                sessionStorage.documentOrderQueryString = undefined;
+                $location.search({})
+            }
+        }
+        $scope.getFile = function() {
+            window.location = 'assets/excel_template/Bulk_Upload_Template_v3.xlsm'
+        }
+        $scope.uploadFiles = function(file) {
+            if (file) {
+                $scope.stopProgressService = CONSTANTS.getCONSTANTS().FALSE;
+                file.upload = Upload.upload({
+                    url: $rootScope.config.url + URLS.getURLS().UPLOADEXCELITERATURESEARCHURL + sessionStorage.cwid,
+                    data: {
+                        file: file
+                    },
+                    transformRequest: angular.identity,
+                    headers: {
+                        'Content-type': undefined,
+                        'LMS_AUTH_TOKEN': sessionStorage.LMS_AUTH_TOKEN
+                    }
+                });
+                file.upload.then(function(response) {
+                    $scope.showLiteratureSearch = CONSTANTS.getCONSTANTS().FALSE;
+                    $scope.showExcelProgress = CONSTANTS.getCONSTANTS().FALSE;
+                    $scope.stopProgressService = CONSTANTS.getCONSTANTS().TRUE;
+                    if (response.data.CompleteList != CONSTANTS.getCONSTANTS().NULLCHECK && response.data.CompleteList.length != CONSTANTS.getCONSTANTS().NUMERIC_ZERO) {
+                        $scope.completeListCount = CONSTANTS.getCONSTANTS().NUMERIC_ZERO;
+                        angular.forEach(response.data.CompleteList, function(dataElement, dataElemIndex) {
+                            angular.forEach(dataElement, function(dataElementInner, dataElemIndexInner) {
+                                if (typeof sessionStorage.documentList == CONSTANTS.getCONSTANTS().UNDEFINED || sessionStorage.documentList == CONSTANTS.getCONSTANTS().NULLCHECK) {
+                                    $scope.sessionDataInAarrayFormat = []
+                                } else {
+                                    $scope.sessionDataInAarrayFormat = JSON.parse(sessionStorage.documentList)
+                                }
+                                $scope.completeListCount += CONSTANTS.getCONSTANTS().ONE;
+                                $scope.sessionDataInAarrayFormat.push(dataElementInner);
+                                sessionStorage.documentList = JSON.stringify($scope.sessionDataInAarrayFormat)
+                            })
+                        })
+                    }
+                    $scope.ambigousList = [];
+                    if (response.data.AmbiguousList != CONSTANTS.getCONSTANTS().NULLCHECK && response.data.AmbiguousList.length != CONSTANTS.getCONSTANTS().NUMERIC_ZERO) {
+                        $scope.totalAmbigousLists = response.data.AmbiguousList.length;
+                        $scope.showAmbigousList = CONSTANTS.getCONSTANTS().TRUE;
+                        $scope.allAmbigousLists = response.data.AmbiguousList;
+                        $scope.ambigousList = $scope.allAmbigousLists[0];
+                        if (typeof sessionStorage.documentList == CONSTANTS.getCONSTANTS().UNDEFINED || sessionStorage.documentList == CONSTANTS.getCONSTANTS().NULLCHECK) {
+                            $scope.sessionInitialLength = CONSTANTS.getCONSTANTS().NUMERIC_ZERO
+                        } else {
+                            $scope.sessionInitialLength = JSON.parse(sessionStorage.documentList).length
+                        }
+                    }
+                    if ($scope.ambigousList.length == 0) {
+                        $scope.uploadExcelSuccess = CONSTANTS.getCONSTANTS().TRUE;
+                        $scope.uploadExcelFailed = CONSTANTS.getCONSTANTS().FALSE
+                    } else {
+                        $scope.showAmbigousList = CONSTANTS.getCONSTANTS().TRUE;
+                        $scope.uploadExcelSuccess = CONSTANTS.getCONSTANTS().FALSE;
+                        $scope.uploadExcelFailed = CONSTANTS.getCONSTANTS().FALSE
+                    }
+                }, function(errorResponse) {
+                    $scope.showExcelProgress = CONSTANTS.getCONSTANTS().FALSE;
+                    $scope.stopProgressService = CONSTANTS.getCONSTANTS().TRUE;
+                    $scope.uploadExcelSuccess = CONSTANTS.getCONSTANTS().FALSE;
+                    if (errorResponse.data.errCode === 417) {
+                        $scope.showLiteratureSearch = CONSTANTS.getCONSTANTS().TRUE;
+                        $scope.uploadExcelFailed = CONSTANTS.getCONSTANTS().FALSE;
+                        apiService.raiseAddUpdateSuccessPopUp(1000, errorResponse.data.message, null, $scope.translations)
+                    } else {
+                        $scope.showLiteratureSearch = CONSTANTS.getCONSTANTS().FALSE;
+                        $scope.uploadExcelFailed = CONSTANTS.getCONSTANTS().TRUE
+                    }
+                });
+                $scope.uploadProgress = {};
+                $scope.showExcelProgress = CONSTANTS.getCONSTANTS().TRUE;
+                $scope.widthInPer = 0;
+                angular.element(document.getElementsByClassName("myBar")).width($scope.widthInPer + "%");
+                $interval(function() {
+                    if (!$scope.stopProgressService) {
+                        $scope.showExcelProgress = CONSTANTS.getCONSTANTS().TRUE;
+                        apiService.getData($rootScope.config.url + URLS.getURLS().DOCBOARDUPLOADREALTIMEPROGRESS + sessionStorage.cwid, sessionStorage.LMS_AUTH_TOKEN).then(function(response) {
+                            if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                                $location.path("/login")
+                            } else {
+                                $scope.uploadProgress = response.data;
+                                if ($scope.uploadProgress.total == 0) {
+                                    $scope.widthInPer = 0
+                                } else {
+                                    $scope.widthInPer = Math.ceil(100 * ($scope.uploadProgress.processed / $scope.uploadProgress.total))
+                                }
+                                angular.element(document.getElementsByClassName("myBar")).width($scope.widthInPer + "%")
+                            }
+                        }, function(data) {})
+                    }
+                }, 1200)
+            }
+        }
+        $scope.orderLiteratureSearch = function(identifierForm, mainForm, identifierID, mainFormID, literatureType, literatureSearchObject) {
+            literatureSearchObject.literatureType = literatureType;
+            $scope.buttonClicked = CONSTANTS.getCONSTANTS().TRUE;
+            $scope.formValidationMessages = CONSTANTS.getCONSTANTS().FALSE;
+            $scope.commonError = CONSTANTS.getCONSTANTS().FALSE;
+            $scope.yearNotValid = CONSTANTS.getCONSTANTS().TRUE;
+            if (literatureType == "JOURNAL_ARTICLE") {
+                yearTocheck = literatureSearchObject.journalArticleYear
+            } else if (literatureType == "DISSERTATION") {
+                yearTocheck = literatureSearchObject.dissertationYear
+            } else if (literatureType == "BOOK" || literatureType == "BOOK_PART") {
+                yearTocheck = literatureSearchObject.bookYear
+            }
+            if (yearTocheck != null)
+                $scope.yearNotValid = /^\d{4}$/.test(yearTocheck);
+            if (!literatureSearchObject.identifier) {
+                $emptyFields = $('#' + mainFormID + " input").filter(function() {
+                    return $.trim($(this).val()).length === CONSTANTS.getCONSTANTS().NUMERIC_ZERO
+                })
+                if ($emptyFields.length != $('#' + mainFormID + " input").length) {
+                    if (mainForm.$invalid) {
+                        $scope.formValidationMessages = CONSTANTS.getCONSTANTS().TRUE;
+                        $scope.commonError = CONSTANTS.getCONSTANTS().FALSE
+                    } else {
+                        $scope.formValidationMessages = $scope.commonError = CONSTANTS.getCONSTANTS().FALSE;
+                        if ($scope.yearNotValid)
+                            $scope.hitAPIForDocBoardLiteratureSearch(literatureSearchObject)
+                    }
+                } else {
+                    $scope.formValidationMessages = CONSTANTS.getCONSTANTS().FALSE;
+                    $scope.commonError = CONSTANTS.getCONSTANTS().TRUE
+                }
+            } else {
+                if ($scope.yearNotValid)
+                    $scope.hitAPIForDocBoardLiteratureSearch(literatureSearchObject)
+            }
+        }
+        $scope.patentOrder = function(mainForm, literatureType, literatureSearchObject) {
+            $scope.buttonClicked = CONSTANTS.getCONSTANTS().TRUE;
+            $scope.commonError = CONSTANTS.getCONSTANTS().FALSE;
+            literatureSearchObject.literatureType = literatureType;
+            if (mainForm.$valid) {
+                $scope.hitAPIForDocBoardLiteratureSearch(literatureSearchObject)
+            } else {
+                $scope.commonError = CONSTANTS.getCONSTANTS().TRUE
+            }
+        }
+        $scope.addToDocListSession = function(objectToPushInSession, index) {
+            if (typeof sessionStorage.documentList == CONSTANTS.getCONSTANTS().UNDEFINED || sessionStorage.documentList == CONSTANTS.getCONSTANTS().NULLCHECK) {
+                $scope.sessionDataInAarrayFormat = []
+            } else {
+                $scope.sessionDataInAarrayFormat = JSON.parse(sessionStorage.documentList)
+            }
+            $scope.sessionDataInAarrayFormat.push(objectToPushInSession);
+            sessionStorage.documentList = JSON.stringify($scope.sessionDataInAarrayFormat);
+            if ($scope.sessionInitialLength + $scope.totalAmbigousLists == JSON.parse(sessionStorage.documentList).length) {
+                $location.path('/documentList')
+            } else {
+                index = JSON.parse(sessionStorage.documentList).length - $scope.sessionInitialLength;
+                $scope.ambigousList = $scope.allAmbigousLists[index]
+            }
+        }
+        $scope.resetLitForm = function() {
+            emptyObject = CONSTANTS.getCONSTANTS().NULLCHECK;
+            sessionStorage.recoverLiteratureSearchObject = JSON.stringify(emptyObject);
+            sessionStorage.resoreTabToShow = "YES";
+            sessionStorage.restoreThisTab = angular.copy($scope.tabToShow);
+            $scope.literatureSearchObject = getDefaultLiteratureSearchObject();
+            $scope.literatureSearchObject.countryCode = $scope.patentCodeArrays[0];
+            sessionStorage.resoreTabToShow = "NO";
+            $scope.buttonClicked = CONSTANTS.getCONSTANTS().FALSE
+        }
+    }
+})()

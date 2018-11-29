@@ -1,0 +1,48 @@
+#firstFileuploader .btn-primary{
+    background-color: red;
+}
+#imageUploadSection .btn-primary {
+    background-color: #10384F;height: 200px;width: 200px;line-height: 200px;
+}
+#imageUploadSection .input-group-prepend + input{
+    display:none;
+}
+#list {
+    position: absolute;width: 200px;height: 200px;top: 0px;
+}
+#list img{
+	width: 200px;height: 200px;
+}
+#list #removeImage{
+	position: absolute;;right: 0;bottom: 0; color:red;
+}
+
+#eBookMultiplieLoadExample{
+	float: left;
+}
+#eBookMultiplieLoadExample .btn-primary{
+    background: transparent;color: #000;border: 1px solid #ddd;width: 150px;text-align: left;overflow: hidden;
+}
+#eBookMultiplieLoadExample .input-group-prepend + input{
+    display:none;
+}
+
+
+
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+
+
+
+#formValidationWrapper{
+  border:2px solid green;padding: 10px;margin-top: 10px;
+}
+.fileWrapper{
+    width:200px;border:2px solid red;margin:0 auto;margin-bottom:100px;position: relative;
+}

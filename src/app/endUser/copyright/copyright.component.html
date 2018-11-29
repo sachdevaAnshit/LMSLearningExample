@@ -1,0 +1,93 @@
+<p>Copyright Matrix</p>
+
+<p [hidden]="true">{{copyrightMatrixData | json}}</p>
+
+<div class="row margin0">
+    <table class="table-bordered copyRightsTable">
+        <tbody>
+            <tr *ngFor="let key of Object.keys(copyrightMatrixData)">
+                <td *ngFor="let elementsToRender of copyrightMatrixData[key]">
+                    <ng-template #popTemplate><span [innerHtml]="elementsToRender.content"></span></ng-template>
+                    <p [hidden]="true">{{elementsToRender | json}}</p>
+                    <ng-template #popupContent>Hello, <b>{{member.name}}</b>!</ng-template>
+                    <p *ngIf="elementsToRender.rowIndex != 0 && elementsToRender.colIndex != 0" [ngStyle]="assignColor(elementsToRender.color)" [tooltip]="popTemplate" placement="bottom">
+                        <span style="visibility: hidden;">{{elementsToRender.color}}</span>
+                    </p>
+                    <p *ngIf="(elementsToRender.rowIndex == 0 && elementsToRender.colIndex != 0) || (elementsToRender.rowIndex != 0 && elementsToRender.colIndex == 0)" class="pos-relative" title="{{elementsToRender.text}}" style="position: relative;">
+                        <span class="firstRowColumn">{{elementsToRender.text}}</span></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p>**************************</p>
+
+<p>Tooltip and Upload File Merger as Documen tOrder - Upload Button</p>
+<h3>Clickable Tooltip</h3>
+
+<style>
+div.interactiveTooltip {
+    background:#1d1d1d;color:#fff;padding:7px;border-radius:5px;position:absolute;min-width:50px;max-width:300px;display:none;z-index:2;
+}
+div.interactiveTooltip:before{
+  content:'';height:3px;width:0;border:7px solid transparent;border-bottom-color:#1d1d1d;position:absolute;top:-16px;left:14px;z-index:2;
+}
+div.interactiveTooltip a{
+  color:#1884BC;text-decoration:none;
+}
+</style>
+<ul>
+    <li style="display:inline-block;">
+        <span class="">
+            <file-uploader id="documentOrderUploadReplica" [allowMultiple]="false" [fileType]="'image/*'" 
+                (onSelection)="fileuploaderFileChange1($event)" [required]="false">
+            </file-uploader>    
+        </span>
+        <div class="interactiveTooltip">
+            <p>Get Excel template from 
+                <a class="tooltipLink" href="assets/excel_template/Bulk_Upload_Template_v3.xlsm">here</a>
+            </p>
+        </div>
+    </li>
+    <li>
+        Test2
+        <div class="interactiveTooltip">    tooltip2 <button type="button" id="anshit">Click Me</button>    </div>
+    </li> 
+</ul>
+
+
+<h1>Copyright</h1>
+
+<h4>Document Otder - Literature Upload Section - Upload directly</h4>
+<div class="fileWrapper">
+    <file-uploader 
+        [allowMultiple]="false" [fileType]="'application/*'" id="firstFileuploader" (onSelection)="fileuploaderFileChange($event)"
+        [required]="false">
+    </file-uploader>
+</div>
+
+<p>{{"fileObj - - - " + fileObj}}</p>
+<h4>Image upload Section - Add/Edit eBook/eJournal</h4>
+<div class="fileWrapper">
+    <file-uploader id="imageUploadSection" [allowMultiple]="false" [fileType]="'image/*'" (onSelection)="fileuploaderFileChange1($event)" 
+        [required]="false">
+    </file-uploader>
+    <div id="list" [hidden]="hiddenImage">    
+        <span id="removeImage" (click)="removeImage()">X</span>
+    </div>
+</div>
+
+<h4>Hold and then upload on act of button</h4>
+<div class="fileWrapper">
+    <file-uploader [allowMultiple]="false" [fileType]="'application/*'" id="holdThenUpload" (onSelection)="initaliseFiletoUploadLater($event)" [required]="false">
+    </file-uploader>
+    <button (click)="hitForDocBoardResults()">hitForDocBoardResults</button>
+</div>
+
+<h4>Transforming Uploader as eBook Mgmt - Multiple Upload</h4>
+<div class="fileWrapper">
+    <file-uploader [allowMultiple]="false" [fileType]="'application/*'" id="eBookMultiplieLoadExample" (onSelection)="initaliseFiletoUploadLater($event)" [required]="false">
+    </file-uploader>
+    <button (click)="hitForDocBoardResults()">hitForDocBoardResults</button>
+</div>

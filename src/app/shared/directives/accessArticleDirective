@@ -1,0 +1,134 @@
+(function() {
+    'use strict';
+    angular.module("libraryApp").directive("accessArticle", function($rootScope, $location, $route, $log, $window, dataService, apiService, CONSTANTS, URLS) {
+        return {
+            scope: {
+                "accessArticle": "="
+            },
+            link: function(scope, elem, attrs) {
+                scope.urlToRedirect = CONSTANTS.getCONSTANTS().NULLCHECK;
+                scope.flagToCheckForClickableImage = CONSTANTS.getCONSTANTS().FALSE;
+                if (scope.accessArticle) {
+                    switch (scope.accessArticle.widgetType) {
+                        case CONSTANTS.getCONSTANTS().EBOOK:
+                            scope.urlToRedirect = scope.accessArticle.fields.book_url;
+                            scope.flagToCheckForClickableImage = scope.accessArticle.fields.book_url ? !0 : !1;
+                            break;
+                        case CONSTANTS.getCONSTANTS().EJOURNAL:
+                            scope.urlToRedirect = scope.accessArticle.fields.journal_url;
+                            scope.flagToCheckForClickableImage = scope.accessArticle.fields.journal_url ? !0 : !1;
+                            break;
+                        case CONSTANTS.getCONSTANTS().PUBMED:
+                            if (scope.accessArticle.literature != undefined) {
+                                scope.flagToCheckForClickableImage = (scope.accessArticle.literature.literatureServices.length != 0 || scope.accessArticle.literature.literatureServices != null) && (scope.accessArticle.literature.literatureServices[0].type == "ONLINE");
+                                if (scope.flagToCheckForClickableImage)
+                                    scope.urlToRedirect = scope.accessArticle.literature.literatureServices[0].onlineTargets[0].url
+                            } else if (scope.accessArticle.fields.url) {
+                                scope.flagToCheckForClickableImage = CONSTANTS.getCONSTANTS().TRUE;
+                                scope.urlToRedirect = scope.accessArticle.fields.url
+                            }
+                            break;
+                        case CONSTANTS.getCONSTANTS().CROSSREF:
+                            if (scope.accessArticle.literature != undefined) {
+                                scope.flagToCheckForClickableImage = (scope.accessArticle.literature.literatureServices.length != 0 || scope.accessArticle.literature.literatureServices != null) && (scope.accessArticle.literature.literatureServices[0].type == "ONLINE");
+                                if (scope.flagToCheckForClickableImage)
+                                    scope.urlToRedirect = scope.accessArticle.literature.literatureServices[0].onlineTargets[0].url
+                            } else if (scope.accessArticle.fields.url) {
+                                scope.flagToCheckForClickableImage = CONSTANTS.getCONSTANTS().TRUE;
+                                scope.urlToRedirect = scope.accessArticle.fields.url
+                            }
+                            break
+                    }
+                }
+                if (scope.flagToCheckForClickableImage) {
+                    elem.addClass("cursor-pointer")
+                } else {
+                    elem.removeClass("cursor-pointer")
+                }
+                var myOnlineAccessObject, win, urlToHitForAccesseBookOreJournal;
+                elem.on("click", function() {
+                    if (scope.flagToCheckForClickableImage) {
+                        if ($location.path() != "/eBookManagement" && $location.path() != "/eJournalManagement") {
+                            myOnlineAccessObject = {
+                                "cwid": sessionStorage.cwid,
+                                "widgetType": scope.accessArticle.widgetType,
+                                "documentId": scope.accessArticle.documentId
+                            };
+                            apiService.putPostData($rootScope.config.url + URLS.getURLS().ADDONLINEACCESSURL, sessionStorage.LMS_AUTH_TOKEN, myOnlineAccessObject, 'post', 'json').then(function(response) {
+                                if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                                    $location.path("/login")
+                                } else {
+                                    win = $window.open(scope.urlToRedirect, '_blank');
+                                    win.focus()
+                                }
+                            }, function(data) {});
+                            switch (scope.accessArticle.widgetType) {
+                                case CONSTANTS.getCONSTANTS().EBOOK:
+                                    urlToHitForAccesseBookOreJournal = URLS.getURLS().ADMINMGMTEBOOKUSAGEADD;
+                                    break;
+                                case CONSTANTS.getCONSTANTS().EJOURNAL:
+                                    urlToHitForAccesseBookOreJournal = URLS.getURLS().ADMINMGMTEJOURNALUSAGEADD;
+                                    break
+                            }
+                            if (scope.accessArticle.widgetType === "eBook" || scope.accessArticle.widgetType === "eJournal") {
+                                apiService.eBookeJournalUsageIncrement($rootScope.config.url + urlToHitForAccesseBookOreJournal, sessionStorage.LMS_AUTH_TOKEN, sessionStorage.division, scope.accessArticle.documentId, scope.accessArticle.fields.title)
+                            }
+                        } else {
+                            win = $window.open(urlToRedirect, '_blank');
+                            angular.element(document.getElementById('docListAccessModal')).modal('hide');
+                            win.focus()
+                        }
+                    }
+                })
+            }
+        }
+    });
+    angular.module("libraryApp").directive("orderArticle", function($rootScope, $location, $route, $log, $window, dataService, apiService, CONSTANTS, URLS) {
+        return {
+            scope: {
+                "orderArticle": "="
+            },
+            link: function(scope, elem, attrs) {
+                var arrayToPushToCart = [],
+                    objectToPushToArryForCart = {},
+                    basePrice, type_Plus_orderType, orderType, additionalCartItems;
+                elem.on("click", function() {
+                    objectToPushToArryForCart.literature = scope.orderArticle.literature;
+                    angular.forEach(objectToPushToArryForCart.literature.literatureServices, function(innerItem) {
+                        basePrice = 0;
+                        orderType = CONSTANTS.getCONSTANTS().NULLCHECK;
+                        type_Plus_orderType = CONSTANTS.getCONSTANTS().NULLCHECK;
+                        if (innerItem.type === CONSTANTS.getCONSTANTS().ORDER && (innerItem.orderType === CONSTANTS.getCONSTANTS().LOAN || innerItem.orderType === CONSTANTS.getCONSTANTS().COPY)) {
+                            basePrice = innerItem.price;
+                            orderType = innerItem.orderType;
+                            type_Plus_orderType = objectToPushToArryForCart.literature.type + '_' + innerItem.orderType;
+                            additionalCartItems = {
+                                "orderType": orderType,
+                                "type": type_Plus_orderType,
+                                "basePrice": basePrice,
+                                "express": CONSTANTS.getCONSTANTS().FALSE,
+                                "expressOptionPrice": CONSTANTS.getCONSTANTS().ZERO,
+                                "personalNote": CONSTANTS.getCONSTANTS().NULLCHECK,
+                                "orderNote": CONSTANTS.getCONSTANTS().NULLCHECK,
+                                "forExternalUse": CONSTANTS.getCONSTANTS().FALSE,
+                                "colorCopy": CONSTANTS.getCONSTANTS().FALSE,
+                                "translationType": CONSTANTS.getCONSTANTS().NULLCHECK,
+                                "totalPrice": basePrice,
+                                "translationWanted": CONSTANTS.getCONSTANTS().NULLCHECK
+                            };
+                            angular.extend(objectToPushToArryForCart, additionalCartItems);
+                            arrayToPushToCart.push(objectToPushToArryForCart)
+                        }
+                    });
+                    apiService.putPostData($rootScope.config.url + URLS.getURLS().SHOPPINGCARTADD + sessionStorage.cwid, sessionStorage.LMS_AUTH_TOKEN, arrayToPushToCart, 'POST', 'JSON').then(function(response) {
+                        if (response.headers().lms_auth_token == CONSTANTS.getCONSTANTS().NULLCHECK) {
+                            $location.path("/login")
+                        } else {
+                            $rootScope.cartCount += CONSTANTS.getCONSTANTS().ONE
+                        }
+                    }, function(data) {})
+                })
+            }
+        }
+    })
+})()

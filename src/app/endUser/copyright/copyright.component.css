@@ -1,0 +1,84 @@
+#firstFileuploader .btn-primary{
+    background-color: red;
+}
+#imageUploadSection .btn-primary {
+    background-color: #10384F;height: 200px;width: 200px;line-height: 200px;
+}
+#imageUploadSection .input-group-prepend + input{
+    display:none;
+}
+#list {
+    position: absolute;width: 200px;height: 200px;top: 0px;
+}
+#list img{
+	width: 200px;height: 200px;
+}
+#list #removeImage{
+	position: absolute;;right: 0;bottom: 0; color:red;
+}
+
+#eBookMultiplieLoadExample{
+	float: left;
+}
+#eBookMultiplieLoadExample .btn-primary{
+    background: transparent;color: #000;border: 1px solid #ddd;width: 150px;text-align: left;overflow: hidden;
+}
+#eBookMultiplieLoadExample .input-group-prepend + input{
+    display:none;
+}
+
+
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+
+
+
+#formValidationWrapper{
+  border:2px solid green;padding: 10px;margin-top: 10px;
+}
+.fileWrapper{
+    width:200px;border:2px solid red;margin:0 auto;margin-bottom:100px;position: relative;
+}
+
+
+#documentOrderUploadReplica .btn-primary {
+    background-color: #10384F;height: 50px;padding: 10px 20px;
+}
+#documentOrderUploadReplica .input-group-prepend + input{
+    display:none;
+}
+
+
+.copyRightsTable.table-bordered{
+    margin: 20px auto;
+}
+.copyRightsTable.table-bordered .firstRowColumn{
+    position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);
+}
+.copyRightsTable.table-bordered > thead > tr > th, .copyRightsTable.table-bordered > tbody > tr > th,
+.copyRightsTable.table-bordered > tfoot > tr > th, .copyRightsTable.table-bordered > thead > tr > td,
+.copyRightsTable.table-bordered > tbody > tr > td, .copyRightsTable.table-bordered > tfoot > tr > td {
+    border: 1px solid #fff;max-width: 150px;min-width: 150px;min-height: 100px;
+    vertical-align: top;text-align: center;font-size: 18px;
+}
+.copyRightsTable.table-bordered td p {
+    margin: 0px; width: 100%; min-height: 150px;cursor: pointer;
+}
+.copyRightsTable.table-bordered td:nth-child(1), .copyRightsTable.table-bordered tr:nth-child(1) td {
+    background: #006183;color: #fff;
+}
+.copyRightsTable.table-bordered .arrow{
+    display: none !important;
+}
+.copyRightsTable.table-bordered .popover{
+    border-radius: 0 !important;font-size: 16px;
+}
+.copyRightsTable.table-bordered .bottom.popover {
+    margin-top: -75px;
+}

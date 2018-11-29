@@ -1,0 +1,33 @@
+<carousel [interval]="3000" [(activeSlide)]="activeSlideIndex" >
+	<slide *ngFor="let newsFeedItem of glossaryData.NewsFeed; let index=index">
+		<div class="pull-left">
+			<img [src]="'data:image/jpg;base64,'+ newsFeedItem.glossaryImage" *ngIf='newsFeedItem.glossaryImage' style="width:150px;height:150px;"/>
+			<img src="assets/img/defaultImage.png" *ngIf='!newsFeedItem.glossaryImage' style="width:150px;height:150px;"/>
+		</div>
+		<div class="pull-right">
+			<h1>Issue with Base 64 - {{index}}</h1>
+			<p>{{newsFeedItem.glossaryNewsfeedName}}</p>
+			<p>{{newsFeedItem.glossaryUrl}}</p>
+		</div>
+ 	</slide>
+</carousel>
+
+<h1>Modal Concept</h1>
+
+<button type="button" class="btn btn-primary" (click)="openModal(template)">Create template modal</button> 
+
+<div class="clear"></div>
+
+<button type="button" class="btn btn-primary" (click)="openModalWithComponent('HOME','NORMALSEARCH')" style="margin-top:15px;">Dynamic modal with component</button>
+
+<ng-template #template>
+    <div class="modal-header">
+        <p class="modal-title pull-left">Modal</p>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        This is a modal.
+    </div>
+</ng-template>

@@ -1,0 +1,21 @@
+<!-- ng-if="$root.mainSearchObject.filters | checkFiltersArray" -->
+<style>
+ ul{list-style-type:none}
+</style>
+<ul class='filtersAtTopParentUl'>
+	<li *ngFor="let key of Object.keys(searchobject.filters)">
+		<ng-container *ngIf="searchobject.filters[key].length != 0 && key != 'available'">
+			<ul class='filteraAtTopChildUl'>
+				<li class="pull-left" *ngFor="let filterSelected of searchobject.filters[key]" (click)="checkBoxEvent(key, filterSelected ,false)">
+		        	<p class='no-margin'>
+		        		<b>X</b>
+		        		<span *ngIf="key !== 'authorEditor'" class='textBold' style='text-transform: capitalize;margin-left: 10px;'>
+		        			{{key}}: </span>
+						<span *ngIf="key === 'authorEditor'" class='textBold'>Author/Editor: </span>
+		        		{{filterSelected}}
+		        	</p>
+		        </li>
+			</ul>
+		</ng-container>
+	</li>
+</ul>

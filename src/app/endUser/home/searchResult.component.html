@@ -1,0 +1,65 @@
+<div class="row" *ngIf="showOriginalHeader">	
+	<div class="col-md-2 ellipsis resultCountWrapper">
+		<span>{{searchResultsData.totalResultCount}}</span>
+		<span class="color-white" *ngIf='searchResultsData.totalResultCount <= 1'>result shown for</span>
+		<span class="color-white" *ngIf='searchResultsData.totalResultCount > 1'>results shown for</span>
+		<span title="{{searchString}}">"{{searchString}}"</span>
+	</div> <!-- end of .resultCountWrapper -->
+	<div class="col-md-3 sortByWrapper">
+		<span>Sort By</span>
+		<select [(ngModel)]="sortFilterModel" (change)="sortChanged()">
+			<option value="RELEVANCE">Relevant</option>
+			<option value="YEAROLDEST">Year - ascending</option>
+			<option value="YEARNEWEST">Year - descending</option>
+			<option value="TITLE">Title</option>
+		</select>
+	</div> <!-- end of .sortByWrapper -->
+	<div class="col-md-3 downloadResultsWrapper">
+		<button class='downloadResults' (click)="showDownloadWrapperToggle()" [disabled]="!searchResultsData.documents.length">Download</button>
+	</div> <!-- end of .downloadResultsWrapper -->
+	<div class="col-md-4 listGridWrapper">
+		<a (click)="changeLayout('grid')">Grid<span>- - - - - - - - </span></a>
+		<a (click)="changeLayout('list')">List<span>- - - - - - - - </span></a>
+	</div><!-- end of .listGridWrapper -->
+</div>
+
+<div class="row" *ngIf="!showOriginalHeader">
+	<div class='col-md-3 col-md-offset-3 sortByWrapper'>
+		<span>Select</span>
+		<select [(ngModel)]='searchResultDownloadType'>
+			<option value="SELECTED">Selected</option>
+			<option value="Page">Page</option>
+			<option value="50">Top 50</option>
+		</select>
+	</div> <!-- end of .selectDropdown -->
+	<div class="col-md-6 downloadCancelWrapper">
+		<!-- [disabled]="downloadLinks.selectedValues.length<1  && searchResultDownloadType == 'SELECTED'" -->
+		<button class='download' (click)="downloadExportExcel()" >Download</button>
+		<button class='cancelResults' (click)="showDownloadWrapperToggle()">Cancel</button>
+	</div> <!-- end of .downloadCancelWrapper -->
+</div> <!-- end of .searchResultDownloadOptions -->
+
+<div class="row">
+	<div class="col-md-2">
+		<filter-management [searchresultsfilterdata]="searchResultsData" [searchobject]="jsonData" (hitfilterapiinparent)="hitFilterApi($event)"></filter-management>
+	</div>
+	<div class="col-md-10">
+		<filters-as-tiles [searchresultsfilterdata]="searchResultsData" [searchobject]="jsonData" (hitfilterapiinparent)="hitFilterApi($event)"></filters-as-tiles>
+		<ul class="no-padding-left" *ngIf="layout == 'grid'">
+			<li class='gridItems' *ngFor="let searchResultData of searchResultsData.documents; let index=index">
+				<bayer-grid-view 
+					[downloadlinksobject]="downloadLinksObject" 
+					[passeddata]="searchResultData" 
+					[excelobject]="dataToExportExcel"></bayer-grid-view>
+			</li>
+		</ul>
+		<ul class="no-padding-left" *ngIf="layout == 'list'">
+			<li class='listItems' *ngFor="let searchResultData of searchResultsData.documents; let index=index">
+				<bayer-list-view 
+					[downloadlinksobject]="downloadLinksObject" 
+					[passeddata]="searchResultData" 
+					[excelobject]="dataToExportExcel"></bayer-list-view>
+			</li>
+		</ul>
+	</div>
+</div>

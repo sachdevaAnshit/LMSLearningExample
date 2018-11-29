@@ -1,0 +1,45 @@
+<h1>Library Cart</h1>
+<p>{{"expressDeliveryPrice = "  + expressDeliveryPrice}}</p>
+<p>{{"cartItems = "  + (shoppingCartItems|json)}}</p>
+
+<div class="librarycartWrapper">
+
+	<button (click)="changeCount()">Increase Count</button>
+
+	<!-- In case there is no items in the library cart -->
+	<p *ngIf="shoppingCartItems.length === 0" class="noResultFound">No Cart Item Found.</p>
+	<div class="row libraryCartItem" *ngFor="let item of shoppingCartItems;let i = index;">		
+		<p>{{"index = = = " + i}}{{item.literature.type}} {{item.cartItemId}}</p>
+		<div class="col-xs-12 col-sm-5 libraryCartItemDetails">
+			<library-cart-view-details [cartObj]="item"></library-cart-view-details>
+		</div>
+		<div class="col-xs-12 col-sm-7 orderExpressWrapper">
+			<div class="row no-margin">
+				<div class="col-xs-12 col-sm-6">
+					<label>
+						<input type="radio" value="false" name="standardDelivery" [(ngModel)]="item.expressDelivery" (click)="expressDelivery(item);"/>
+						Standard Delivery
+					</label>
+					<!-- To hide Express Delivery Option if it's BOOK i.e. LOAN BOOK or DISSERTATION i.e. THESIS -->
+					<label [hidden]="item.literature.type === 'BOOK' || item.literature.type === 'DISSERTATION'">
+						<input type="radio" value="true" name="ExpressDelivery" [(ngModel)]="item.expressDelivery" (click)="expressDelivery(item);"/>
+						Express Delivery
+					</label>
+					<textarea class="form-control libraryCartTextArea"
+					placeholder="Personal Notes..." id="exampleTextarea" rows="3" [(ngModel)]="item.personalNote"></textarea>
+				</div>
+				<div class="col-xs-12 col-sm-6">
+					<label>
+						<input type="checkbox" name="docForExternal" [(ngModel)]="item.forExternalUse" [hidden]="item.literature.type === 'BOOK' || item.literature.type === 'DISSERTATION'"/>
+						Doc External Use
+					</label>
+					<label>
+						<input type="checkbox" name="docForExternal" [(ngModel)]="item.colorCopy" [hidden]="item.literature.type === 'BOOK' || item.literature.type === 'DISSERTATION' || item.literature.type === 'PATENT'"/>
+						Color Copy
+					</label>
+					<textarea class="form-control libraryCartTextArea"  placeholder="Order Notes..." id="exampleTextarea" rows="3" [(ngModel)]="item.orderNote"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

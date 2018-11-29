@@ -1,0 +1,16 @@
+<p>{{passeddata.fields.title + passeddata.widgetType}}</p>
+<p>{{"fav flag = = = " + passeddata.isFavorite}}</p>
+<button access-article [objToLookFor]="passeddata">Access Button</button>
+
+<label>
+	Download
+<input type="checkbox" [checked]="true" (click)="downloadValueChanged(passeddata)" [checked]="downloadlinksobject.selectedValues.indexOf(passeddata)!=-1" *ngIf="downloadlinksobject.displayCheckbox"/>
+</label>
+
+<label>
+	Fav
+<input type="checkbox" [(ngModel)]="passeddata.isFavorite" (click)="favToggle(passeddata)"/>
+</label>
+
+<img [src]="'data:image/jpg;base64,'+ passeddata.coverImage" *ngIf='passeddata.coverImage'/>
+<img src="assets/img/defaultImage.png" *ngIf='!passeddata.coverImage'/> 

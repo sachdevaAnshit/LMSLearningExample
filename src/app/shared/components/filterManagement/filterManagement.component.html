@@ -1,0 +1,75 @@
+<div class="searchResultFilterWrapper">
+	<div class="nav">
+		<ul class="no-padding-left">
+			<li class="filterSearchWrapper">
+				<div>
+					<span class="refineText">
+						<span class="refineImg"></span>Refine</span>
+						<span class="pull-right clearAllWrapper">
+							<a id="clearAll" href='javascript:void(0)' (click)='clearAllFilters()'>Clear All</a>
+					</span>
+				</div>
+				<div class="navbar-form pos-relative no-padding">
+					<input id='refineButton' class="refineSearchResult" type='text' placeholder="Search in.."
+						[(ngModel)]='refineText' [disabled]="disableNormalSearch" [ngModelOptions]="{standalone: true}">
+					<button type='submit' (click)="searchFromRefineSearch();">refine</button>
+				</div>
+			</li>
+			<li class="height-auto">
+				<button class="saveSearchBtn" (click)="saveSearch()">Save Search</button>
+			</li>
+		</ul>
+	</div>		
+	<accordion [closeOthers]="oneAtATime">
+		<accordion-group heading="Source">
+		    <div>
+		    	<ul class="srFilterContent sourcesFilter">
+					<li>
+						<input class="pull-left checkbox" type="checkbox" id="EBOOK" name="sources"
+							(change)="checkBoxEvent('sources', 'EBOOK', true)"
+							[checked]='getCheckedStatus("EBOOK")'
+							[disabled]='getDisabledCheck("EBOOK")'/>
+						<span class="ellipsis">Licensed eBooks</span>
+					</li>
+					<li>
+						<input class="pull-left checkbox" type="checkbox" id="EJOURNAL" name="sources"
+							(change)="checkBoxEvent('sources', 'EJOURNAL', true)"
+							[checked]='getCheckedStatus("EJOURNAL")'
+							[disabled]='getDisabledCheck("EJOURNAL")'/>
+						<span class="ellipsis">Licensed eJournal</span>
+					</li>
+					<li>
+						<input class="pull-left checkbox" type="checkbox" id="PUBMED" name="sources"
+							(change)="checkBoxEvent('sources', 'PUBMED', true)"
+							[checked]='getCheckedStatus("PUBMED")'
+							[disabled]='getDisabledCheck("PUBMED")'/>
+						<span class="ellipsis">PubMed</span>
+					</li>
+					<li>
+						<input class="pull-left checkbox" type="checkbox" id="CROSSREF" name="sources"
+							(change)="checkBoxEvent('sources', 'CROSSREF', true)"
+							[checked]='getCheckedStatus("CROSSREF")'
+							[disabled]='getDisabledCheck("CROSSREF")'/>
+						<span class="ellipsis">CrossRef</span>
+					</li>
+				</ul>
+		    </div>
+	  	</accordion-group>
+	  	<ng-container *ngFor="let key of Object.keys(searchresultsfilterdata.searchFacets)">
+	  		<accordion-group *ngIf="!searchresultsfilterdata.searchFacets[key].length == 0" [heading]="getKeyOutPutValue( key )">
+	  			<perfect-scrollbar style="max-height:250px">	
+	  				<input type="text" [(ngModel)]="search[key]"/>
+	  				<!--
+	  				<li *ngFor="let subFilters1 of filterOutSelectedStatus(searchresultsfilterdata.searchFacets[key])">
+	  					<input type="checkbox" id="{{subFilters1}}" name="{{key}}" (change)="checkBoxEvent(key, subFilters1.value, false)" [checked]="true" (change)="checkBoxEvent(key, subFilters.value, subFilters.selected)"/>
+	  					<span class="ellipsis">{{subFilters1.value + " - - - " + subFilters1.count}}</span>
+					</li>-->
+					<li *ngFor="let subFilters of searchresultsfilterdata.searchFacets[key] | filterByString : search[key]">
+						<input class="pull-left checkbox" type="checkbox" id="{{subFilters}}" name="{{key}}" [(ngModel)]="subFilters.selected" (change)="checkBoxEvent(key, subFilters.value, subFilters.selected)"/>
+						<span class="ellipsis">{{subFilters.value + " - - - " + subFilters.count}}</span>
+					</li>
+				</perfect-scrollbar>
+			</accordion-group>
+	  	</ng-container>
+	</accordion>
+</div>

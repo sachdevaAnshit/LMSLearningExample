@@ -1,0 +1,43 @@
+<style>
+.validationForm .marginBottomRow{
+    margin-bottom: 25px;
+}
+.inputFormButtons{
+    border: 1px solid transparent;border-bottom: 1px solid #10384F;background: #fff;width: 100%;padding: 10px;font-size: 28px;
+}
+.bg-dark-blue.color-white{
+    font-size: 28px;border: 1px solid #10384F;padding: 5px 15px;
+}
+</style>
+<div class='logoutWrapper'>
+    <div id="logoutContent">
+    	<!-- ng-submit="submitLoginForm(validationForm);" -->
+        <form class="validationForm" name='validationForm'  novalidate>
+            <!--First row for sCWID-->
+            <div class='row no-margin marginBottomRow'>
+                <!--  -->
+                <input type='text' class="inputFormButtons" placeholder='CWID' [(ngModel)]='user.cwid' name='CWID' id='CWID' required  minlength='3' (change)='user.password = null;' pattern="/[aA-zZ]$/" (focus)='authenticationError = false'>
+                <!-- <div ng-messages="validationForm.CWID.$error" class='bayer-bright-fuchsia text-left' ng-show="validationForm.CWID.$dirty">
+                    <div ng-message="required">{{translations.cwidRequiredError}}</div>
+                    <div ng-message="pattern">{{translations.onlyAlphabetsAllowed}}</div>
+                    <div ng-message="minlength">{{translations.minLengthError}}</div>
+                </div> -->
+			</div>
+            <!--Second row for Password -->
+            <div class='row no-margin marginBottomRow'>
+                <!-- [disabled]='validationForm.CWID.$invalid' -->
+                <input type='password' class="inputFormButtons" id='loginPwd' [(ngModel)]='user.password' 
+                	 placeholder='Password' name='loginPwd' (focus)='authenticationError = false' required> 
+                <!-- <div ng-messages="validationForm.loginPwd.$error" class='bayer-bright-fuchsia text-left' ng-show="validationForm.loginPwd.$dirty && validationForm.CWID.$valid">
+                    <div ng-message="required">{{translations.pwdRequirederror}}</div>
+                </div> -->
+                <p *ngIf="authenticationError" class='bayer-bright-fuchsia text-left'>
+                    Error</p> 
+            </div>
+            <div class='row no-margin text-right marginBottomRow'>
+            	<!-- ng-disabled='validationForm.$invalid' -->
+                <button class='bg-dark-blue color-white' type='submit' (click)="submitLoginForm()">Login</button>
+            </div>
+        </form>
+    </div>
+</div>

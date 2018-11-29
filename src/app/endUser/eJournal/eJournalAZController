@@ -1,0 +1,70 @@
+(function() {
+    'use strict';
+    angular.module("libraryApp").controller("eJournalAZController", eJournalAZController);
+    eJournalAZController.$inject = ['$scope', '$rootScope', '$location', '$http', '$q', '$route', '$timeout', '$window', '$log', '$uibModal', 'apiService', 'dataService', 'CONSTANTS', 'URLS', 'GENERALEVENTS', '$filter'];
+
+    function eJournalAZController($scope, $rootScope, $location, $http, $q, $route, $timeout, $window, $log, $uibModal, apiService, dataService, CONSTANTS, URLS, GENERALEVENTS, $filter) {
+        if (CONSTANTS.getCONSTANTS().NULLCHECK == sessionStorage.LMS_AUTH_TOKEN || CONSTANTS.getCONSTANTS().EMPTYSTRINGCHECK == sessionStorage.LMS_AUTH_TOKEN) {
+            $location.path('/login')
+        } else {
+            sessionStorage.routeToRedirect = "/eJournalAtoZSearch";
+            $rootScope.mainSearchObject = {};
+            $scope.isArray = angular.isArray;
+            $scope.arrayOfAlphabets = GENERALEVENTS.getAlphabetsArray();
+            $scope.searchPhrase = $scope.arrayOfAlphabets[0];
+            $scope.refineText = CONSTANTS.getCONSTANTS().NULLCHECK;
+            var urlToHit;
+            $scope.getEJournalTitles = function(phraseSelected) {
+                $scope.searchPhrase = phraseSelected;
+                $scope.refineText = CONSTANTS.getCONSTANTS().NULLCHECK;
+                apiService.getData($rootScope.config.url + URLS.getURLS().EJOURNALATOZBASEURL + sessionStorage.role + URLS.getURLS().EJOURNALATOZSEARCHPHRASE + $scope.searchPhrase + URLS.getURLS().EJOURNALATOZOFFSET + 0 + URLS.getURLS().EJOURNALATOZLIMIT + CONSTANTS.getCONSTANTS().SEARCHRESULTSAUTOEXPANDLENGTH, sessionStorage.LMS_AUTH_TOKEN).then(function(response) {
+                    if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                        $location.path("/login")
+                    } else {
+                        $scope.eJournalAToZResults = response.data;
+                        //Hit for eJournal A-Z Search - Initial rendering
+                    }
+                }, function(data) {})
+            };
+            $scope.getEJournalTitles($scope.searchPhrase);
+            $scope.refineSearch = function() {
+                urlToHit = $rootScope.config.url + URLS.getURLS().EJOURNALATOZBASEURL + sessionStorage.role + URLS.getURLS().EJOURNALATOZOFFSET + 0 + URLS.getURLS().EJOURNALATOZLIMIT + CONSTANTS.getCONSTANTS().SEARCHRESULTSAUTOEXPANDLENGTH + URLS.getURLS().EJOURNALATOZSEARCHPHRASE + $scope.searchPhrase;
+                urlToHit = ($scope.refineText == "undefined" || $scope.refineText == null || typeof $scope.refineText == undefined) ? urlToHit : urlToHit + URLS.getURLS().EJOURNALATOZREFINETEXT + encodeURIComponent($scope.refineText);
+                apiService.getData(urlToHit, sessionStorage.LMS_AUTH_TOKEN).then(function(response) {
+                    if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                        $location.path("/login")
+                    } else {
+                        $scope.eJournalAToZResults = response.data;
+                        //Hit for eJournal A-Z Search - Refine Search
+                    }
+                }, function(data) {})
+            };
+            $scope.$on($route.current.autoExpand, function(e) {
+                if ($scope.eJournalAToZResults.documents.length != $scope.eJournalAToZResults.totalResultCount) {
+                    $rootScope.isWorking = CONSTANTS.getCONSTANTS().ONE;
+                    urlToHit = $rootScope.config.url + URLS.getURLS().EJOURNALATOZBASEURL + sessionStorage.role + URLS.getURLS().EJOURNALATOZOFFSET + $scope.eJournalAToZResults.documents.length + URLS.getURLS().EJOURNALATOZLIMIT + CONSTANTS.getCONSTANTS().SEARCHRESULTSAUTOEXPANDLENGTH + URLS.getURLS().EJOURNALATOZSEARCHPHRASE + $scope.searchPhrase;
+                    urlToHit = ($scope.refineText == "undefined" || $scope.refineText == null || typeof $scope.refineText == undefined) ? urlToHit : urlToHit + URLS.getURLS().EJOURNALATOZREFINETEXT + encodeURIComponent($scope.refineText);
+                    apiService.getData(urlToHit, sessionStorage.LMS_AUTH_TOKEN).then(function(response) {
+                        if (CONSTANTS.getCONSTANTS().NULLCHECK == response.headers().lms_auth_token) {
+                            $location.path("/login")
+                        } else {
+                            $scope.eJournalAToZResults.documents = $scope.eJournalAToZResults.documents.concat(response.data.documents)
+                        }
+                        $timeout(function() {
+                            $rootScope.isWorking = CONSTANTS.getCONSTANTS().ZERO
+                        }, 1500)
+                    }, function(data) {
+                        $timeout(function() {
+                            $rootScope.isWorking = CONSTANTS.getCONSTANTS().ZERO
+                        }, 1500)
+                    })
+                }
+            });
+            $scope.getRefineSuggestions = function(refineTextValue) {
+                return apiService.getData($rootScope.config.url + '/suggestions?source=EJOURNAL&searchPhrase=' + encodeURIComponent(refineTextValue) + '&field=a_z_search&limit=20&contextFilter=' + $scope.searchPhrase, sessionStorage.LMS_AUTH_TOKEN).then(function(response) {
+                    return response.data
+                })
+            }
+        }
+    }
+})()
